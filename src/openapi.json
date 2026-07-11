@@ -361,6 +361,67 @@
     }
   }
 },
+"/download/spotify": {
+  "get": {
+    "summary": "Spotify Downloader",
+    "description": "Download lagu dari Spotify berdasarkan URL track, dikirim langsung sebagai file mp3",
+    "tags": ["Downloader"],
+    "parameters": [
+      {
+        "name": "url",
+        "in": "query",
+        "description": "URL track Spotify (contoh: https://open.spotify.com/track/xxxxx)",
+        "required": true,
+        "schema": { "type": "string", "format": "uri" }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Berhasil, file audio mp3 dikirim langsung",
+        "content": { "audio/mpeg": { "schema": { "type": "string", "format": "binary" } } }
+      },
+      "400": { "description": "URL tidak disertakan atau tidak valid" },
+      "502": { "description": "Gagal mengambil data dari sumber (signature/playlist/download step)" },
+      "500": { "description": "Gagal memproses request" }
+    }
+  }
+},
+"/download/all": {
+  "get": {
+    "summary": "Universal Downloader",
+    "description": "Ambil metadata & link media dari berbagai platform (YouTube, TikTok, Instagram, Facebook, Twitter/X, Threads, Reddit, Pinterest, Bilibili, Dailymotion, SoundCloud, TED, VK) berdasarkan URL",
+    "tags": ["Downloader"],
+    "parameters": [
+      {
+        "name": "url",
+        "in": "query",
+        "description": "URL media dari platform yang didukung",
+        "required": true,
+        "schema": { "type": "string", "format": "uri" }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Berhasil",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": { "type": "boolean", "example": true },
+                "platforms_supported": { "type": "array", "items": { "type": "string" } },
+                "result": { "type": "object" }
+              }
+            }
+          }
+        }
+      },
+      "400": { "description": "URL tidak disertakan" },
+      "502": { "description": "Gagal solve captcha atau gagal parsing dari sumber" },
+      "500": { "description": "Gagal memproses request" }
+    }
+  }
+},
 "/image/bluearchive": {
       "get": {
         "summary": "Blue Archive",
@@ -539,6 +600,29 @@
           }
         }
       }
+    }
+  }
+},
+"/image/waquote": {
+  "get": {
+    "summary": "WhatsApp Quote Maker",
+    "description": "Membuat gambar bubble chat WhatsApp palsu (quote maker) dari teks/gambar yang diberikan",
+    "tags": ["Image"],
+    "parameters": [
+      { "name": "username", "in": "query", "description": "Nama pengirim", "required": true, "schema": { "type": "string" } },
+      { "name": "phone", "in": "query", "description": "Nomor telepon pengirim yang ditampilkan", "required": true, "schema": { "type": "string" } },
+      { "name": "ppUrl", "in": "query", "description": "URL foto profil pengirim", "required": true, "schema": { "type": "string", "format": "uri" } },
+      { "name": "text", "in": "query", "description": "Isi teks pesan (wajib jika imgUrl kosong)", "required": false, "schema": { "type": "string" } },
+      { "name": "tag", "in": "query", "description": "Label tambahan di bawah nama (opsional)", "required": false, "schema": { "type": "string" } },
+      { "name": "imgUrl", "in": "query", "description": "URL gambar yang disisipkan di bubble chat (opsional)", "required": false, "schema": { "type": "string", "format": "uri" } },
+      { "name": "mode", "in": "query", "description": "Tema tampilan: 'dark' atau 'light'", "required": false, "schema": { "type": "string", "enum": ["dark", "light"], "default": "dark" } }
+    ],
+    "responses": {
+      "200": {
+        "description": "Berhasil, file gambar png dikirim langsung",
+        "content": { "image/png": { "schema": { "type": "string", "format": "binary" } } }
+      },
+      "400": { "description": "Parameter wajib tidak lengkap" }
     }
   }
 },
