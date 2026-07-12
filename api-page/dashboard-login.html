@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kyzen.id — Dev Access</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #2A2825; --bg-panel: #35322D; --hole: #1C1A17;
+    --orange: #FF6B35; --yellow: #FFC145; --cream: #F2EDE4; --cream-dim: #B8B2A4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh;
+    background: radial-gradient(circle at 24px 24px, var(--hole) 3px, transparent 3.5px) 0 0 / 48px 48px, var(--bg);
+    color: var(--cream); font-family: 'IBM Plex Mono', monospace;
+    display: flex; align-items: center; justify-content: center; padding: 24px;
+  }
+  .panel {
+    background: var(--bg-panel); border: 2px solid #423F38; border-radius: 6px;
+    max-width: 380px; width: 100%; padding: 36px 28px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+  h1 { font-family: 'Archivo Black', sans-serif; font-size: 20px; margin: 0 0 6px; color: var(--cream); }
+  p { color: var(--cream-dim); font-size: 13px; margin: 0 0 20px; }
+  input {
+    width: 100%; background: var(--hole); border: 1px solid #4A473F; border-radius: 4px;
+    color: var(--cream); font-family: 'IBM Plex Mono', monospace; font-size: 14px;
+    padding: 12px 14px; margin-bottom: 14px; outline: none;
+  }
+  input:focus { border-color: var(--orange); }
+  button {
+    width: 100%; background: var(--orange); color: #1C1A17; border: none; border-radius: 4px;
+    font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 13px;
+    letter-spacing: 0.06em; text-transform: uppercase; padding: 12px; cursor: pointer;
+  }
+  button:hover { filter: brightness(1.08); }
+  .err { color: var(--yellow); font-size: 12px; margin-top: 12px; display: none; }
+</style>
+</head>
+<body>
+  <div class="panel">
+    <h1>🔒 Dev Access</h1>
+    <p>Masukkan dev key buat akses dashboard.</p>
+    <input type="password" id="key" placeholder="dev key..." autofocus />
+    <button onclick="go()">Masuk</button>
+    <div class="err" id="err">Key salah, coba lagi.</div>
+  </div>
+  <script>
+    function go() {
+      const key = document.getElementById('key').value.trim();
+      if (!key) return;
+      window.location.href = '/dev/dashboard?key=' + encodeURIComponent(key);
+    }
+    document.getElementById('key').addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+    if (new URLSearchParams(window.location.search).get('key')) {
+      document.getElementById('err').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
