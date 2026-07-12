@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kyzen.id — Sedang Perbaikan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/theme.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: flex; align-items: center; justify-content: center; padding: 24px;
+    position: relative; overflow: hidden;
+  }
+  .panel {
+    max-width: 460px; width: 100%; padding: 40px 32px; text-align: left;
+  }
+  .pulse-dot {
+    width: 10px; height: 10px; border-radius: 50%; background: var(--k-teal);
+    box-shadow: 0 0 12px var(--k-teal-glow); margin-bottom: 20px;
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  h1 {
+    font-family: var(--k-font-display); font-size: 32px; line-height: 1.15; margin: 16px 0 14px;
+    color: var(--k-white); text-transform: none; letter-spacing: -0.01em;
+  }
+  p { color: var(--k-dim); font-size: 14px; line-height: 1.7; margin: 0 0 28px; }
+  .meta {
+    display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--k-dimmer); border-top: 1px solid var(--k-border); padding-top: 16px;
+  }
+  .meta b { color: var(--k-teal); }
+</style>
+</head>
+<body class="k-theme">
+  <div class="k-diamond-field"></div>
+  <div class="panel k-card" style="padding:40px 32px;">
+    <div class="pulse-dot"></div>
+    <div class="k-badge">Status — Offline</div>
+    <h1>Lagi ada perbaikan di balik layar.</h1>
+    <p>Salah satu bagian Kyzen.id lagi di-maintenance. Balik lagi sebentar lagi — biasanya nggak lama kok.</p>
+    <div class="meta">
+      <span>KYZEN.ID</span>
+      <span><b>●</b> Maintenance</span>
+    </div>
+  </div>
+</body>
+</html>
