@@ -12,6 +12,7 @@ const DEV_SECRET = process.env.DEV_SECRET || "";
 // ========== UPSTASH REDIS (fail-safe: nonaktif tanpa bikin crash kalau env var belum diisi) ==========
 let redisClient = null;
 let redisEnabled = false;
+let lastRedisError = null;
 
 try {
     if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
@@ -41,7 +42,9 @@ async function redisSafeSet(key, value) {
     try {
         await redisClient.set(key, value);
         return true;
-    } catch {
+    } catch (err) {
+        console.error(chalk.red(`[Redis SET Error] ${err.message}`));
+        lastRedisError = err.message;
         return false;
     }
 }
@@ -413,7 +416,7 @@ app.post("/dev/api/maintenance", async (req, res) => {
         const { enabled } = req.body;
         const saved = await setMaintenance(!!enabled);
         if (!saved) {
-            return res.status(500).json({ status: false, error: "Gagal menyimpan status ke Redis" });
+            return res.status(500).json({ status: false, error: "Gagal menyimpan status ke Redis", detail: lastRedisError });
         }
         res.json({ status: true, maintenance: !!enabled });
     } catch (error) {
