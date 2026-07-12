@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/languages/json.min.js"></script>
@@ -22,8 +22,8 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        'mono': ['Ubuntu Mono', 'monospace'],
-                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                        'mono': ['IBM Plex Mono', 'monospace'],
+                        'sans': ['IBM Plex Mono', 'monospace']
                     }
                 }
             }
@@ -37,15 +37,15 @@
         
         .glass {
             backdrop-filter: blur(16px) saturate(180%);
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.125);
+            background: rgba(20, 20, 22, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         
         .loader {
             width: 28px;
             height: 28px;
-            border: 2px solid #e2e8f0;
-            border-top: 2px solid #4a5568;
+            border: 2px solid #2A2A2E;
+            border-top: 2px solid #4DFFDF;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -57,14 +57,14 @@
         }
         
         .gradient-text {
-            background: linear-gradient(135deg, #334155 0%, #0f172a 100%);
+            background: linear-gradient(135deg, #4DFFDF 0%, #2A8C7C 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         
         .btn-gradient {
-            background: linear-gradient(135deg, #e2e8f0 0%, #4a5568 100%);
+            background: linear-gradient(135deg, #F5F5F7 0%, #8A8A93 100%);
             transition: all 0.3s ease;
         }
         
@@ -74,11 +74,11 @@
         }
         
         .copy-btn {
-            @apply text-gray-500 hover:text-black p-1 rounded-md hover:bg-gray-200 transition-colors duration-150;
+            @apply text-[#8A8A93] hover:text-[#F5F5F7] p-1 rounded-md hover:bg-[#2A2A2E] transition-colors duration-150;
         }
         
         .block-title {
-            @apply text-sm font-semibold text-gray-700 mb-2 flex items-center justify-between;
+            @apply text-sm font-semibold text-[#B0B0B8] mb-2 flex items-center justify-between;
         }
         
         @keyframes fadeIn {
@@ -117,28 +117,28 @@
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-800 antialiased font-mono min-h-screen">
+<body class="bg-gradient-to-br from-[#0A0A0B] via-[#0A0A0B] to-[#141416] text-[#D0D0D5] antialiased font-mono min-h-screen">
 
-    <aside id="sidebar" class="fixed top-0 right-0 h-full w-64 bg-white text-slate-800 border-l border-gray-200 transform translate-x-full duration-300 ease-in-out z-[100]">
-        <div class="px-8 py-4 border-b border-gray-200 flex items-center justify-end">
-            <button id="sidebarClose" class="py-2 px-3 border border-gray-200 text-slate-800 hover:border-gray-600 flex items-center justify-center">
+    <aside id="sidebar" class="fixed top-0 right-0 h-full w-64 bg-[#141416] text-[#D0D0D5] border-l border-[#2A2A2E] transform translate-x-full duration-300 ease-in-out z-[100]">
+        <div class="px-8 py-4 border-b border-[#2A2A2E] flex items-center justify-end">
+            <button id="sidebarClose" class="py-2 px-3 border border-[#2A2A2E] text-[#D0D0D5] hover:border-[#3A3A3E] flex items-center justify-center">
                 <i class="material-icons text-xl">close</i>
             </button>
         </div>
 <div class="p-8">
     <nav>
         <div class="space-y-2">
-            <a href="/" class="flex items-center py-2 px-4 text-sm border border-gray-200 text-gray-600 hover:border-gray-600">
+            <a href="/" class="flex items-center py-2 px-4 text-sm border border-[#2A2A2E] text-[#8A8A93] hover:border-[#3A3A3E]">
                 <i class="material-icons text-lg mr-3">dashboard</i> Dashboard
             </a>
         </div>
 
-        <p class="text-xs text-slate-700 my-4">LINKS.</p>
+        <p class="text-xs text-[#B0B0B8] my-4">LINKS.</p>
         <div class="space-y-2">
-            <a href="https://wa.me/6282313745397" target="_blank" class="flex items-center py-2 px-4 text-sm border border-gray-200 text-gray-600 hover:border-gray-600">
+            <a href="https://wa.me/6282313745397" target="_blank" class="flex items-center py-2 px-4 text-sm border border-[#2A2A2E] text-[#8A8A93] hover:border-[#3A3A3E]">
                 <i class="material-icons text-lg mr-3">arrow_outward</i> Contact
             </a>
-            <a href="https://whatsapp.com/channel/0029Vb6pfuzJf05iZHfkli44" target="_blank" class="flex items-center py-2 px-4 text-sm border border-gray-200 text-gray-600 hover:border-gray-600">
+            <a href="https://whatsapp.com/channel/0029Vb6pfuzJf05iZHfkli44" target="_blank" class="flex items-center py-2 px-4 text-sm border border-[#2A2A2E] text-[#8A8A93] hover:border-[#3A3A3E]">
                 <i class="material-icons text-lg mr-3">arrow_outward</i> Channel
             </a>
         </div>
@@ -148,18 +148,18 @@
 
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 opacity-0 invisible duration-300 ease-in-out z-[90]"></div>
 
-    <header class="glass sticky top-0 z-50 border-b border-gray-200">
+    <header class="glass sticky top-0 z-50 border-b border-[#2A2A2E]">
         <div class="max-w-2xl mx-auto px-8 py-4 flex items-center justify-between">
             <div class="flex gap-4 items-center">
                 <div class="flex flex-col gap-1">
-                    <h2 class="text-lg text-gray-800 font-semibold leading-none">Kyzen.id API</h2>
-                    <p class="text-xs text-gray-500 leading-none">API Documentation</p>
+                    <h2 class="text-lg text-[#D0D0D5] font-semibold leading-none">Kyzen.id API</h2>
+                    <p class="text-xs text-[#8A8A93] leading-none">API Documentation</p>
                 </div>
-                <div class="px-3 py-1.5 bg-slate-900 text-white text-xs font-semibold">
+                <div class="px-3 py-1.5 bg-[#000000] text-white text-xs font-semibold">
                 v1.0
             </div>
             </div>
-            <button id="sidebarToggle" class="py-2 px-3 text-sm border border-gray-200 text-gray-500 hover:border-gray-600 flex items-center justify-center">
+            <button id="sidebarToggle" class="py-2 px-3 text-sm border border-[#2A2A2E] text-[#8A8A93] hover:border-[#3A3A3E] flex items-center justify-center">
                 <i class="material-icons text-xl">menu</i>
             </button>
         </div>
@@ -170,11 +170,11 @@
         <!-- Notifications Panel -->
 <div class="mb-8">
     <div class="flex items-center justify-between mb-3">
-        <h2 class="text-lg font-semibold text-slate-900 flex items-center">
-            <span class="material-icons text-xl mr-2 text-slate-500">notifications</span>
+        <h2 class="text-lg font-semibold text-[#F5F5F7] flex items-center">
+            <span class="material-icons text-xl mr-2 text-[#8A8A93]">notifications</span>
             Informasi
         </h2>
-        <span id="unread-count" class="text-xs bg-slate-900 text-white px-2 py-1 hidden"></span>
+        <span id="unread-count" class="text-xs bg-[#000000] text-white px-2 py-1 hidden"></span>
     </div>
     <div id="notifications-list" class="space-y-2">
     </div>
@@ -183,16 +183,16 @@
 <div class="flex items-center justify-between mb-4">
     <div class="flex-1 relative">
         <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-            <span class="material-icons text-gray-400 text-lg">search</span>
+            <span class="material-icons text-[#6A6A72] text-lg">search</span>
         </div>
-        <input type="text" id="searchInput" placeholder="Search API endpoints..." class="w-full pl-12 pr-5 py-4 text-sm border border-gray-200 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-gray-600">
+        <input type="text" id="searchInput" placeholder="Search API endpoints..." class="w-full pl-12 pr-5 py-4 text-sm border border-[#2A2A2E] bg-[#141416] text-[#F5F5F7] placeholder-slate-400 focus:outline-none focus:border-[#3A3A3E]">
     </div>
 </div>
 
 <div id="content" class="space-y-4">
     <div id="noResults" class="text-center py-16" style="display: none;">
         <div class="max-w-md mx-auto">
-            <h3 class="text-xs text-slate-600 mb-2">No result found.</h3>
+            <h3 class="text-xs text-[#8A8A93] mb-2">No result found.</h3>
         </div>
     </div>
 
@@ -202,7 +202,7 @@
 </div>
 
 <div class="flex flex-col mt-6 text-center">
-    <p class="text-slate-600 text-xs">© 2025 Kyzen.id API. | All Rights Reserved.</p>
+    <p class="text-[#8A8A93] text-xs">© 2025 Kyzen.id API. | All Rights Reserved.</p>
 </div>
 
 <script>
@@ -215,7 +215,7 @@ async function loadNotifications() {
         listEl.innerHTML = ''; // Clear loader
 
         if (!notifications.length) {
-            listEl.innerHTML = '<p class="text-xs text-slate-500">No notifications.</p>';
+            listEl.innerHTML = '<p class="text-xs text-[#8A8A93]">No notifications.</p>';
             return;
         }
 
@@ -223,11 +223,11 @@ async function loadNotifications() {
 
         notifications.forEach(notif => {
             const notifEl = document.createElement('div');
-            notifEl.className = 'p-3 border border-gray-200 rounded text-sm text-slate-800 bg-gray-50';
+            notifEl.className = 'p-3 border border-[#2A2A2E] rounded text-sm text-[#D0D0D5] bg-[#1C1C1F]';
             notifEl.innerHTML = `
                 <div class="flex justify-between items-center">
                     <span>${notif.message}</span>
-                    <span class="text-xs text-gray-400">${notif.date || ''}</span>
+                    <span class="text-xs text-[#6A6A72]">${notif.date || ''}</span>
                 </div>
             `;
             if (!notif.read) unreadCount++;
@@ -369,21 +369,21 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
                             <span><span class="material-icons text-sm mr-2 align-middle">link</span>REQUEST URL</span>
                             <button onclick="copyToClipboard('${window.location.origin}${escapedFullPath}', this)" class="copy-btn"><span class="material-icons text-base align-middle">content_copy</span></button>
                         </h4>
-                        <pre class="bg-gray-900 text-white p-2 text-xs overflow-auto"><code>${window.location.origin}${fullPath}</code></pre>
+                        <pre class="bg-[#000000] text-white p-2 text-xs overflow-auto"><code>${window.location.origin}${fullPath}</code></pre>
                     </div>
                     <div>
                         <h4 class="block-title">
                             <span><span class="material-icons text-sm mr-2 align-middle">terminal</span>CURL COMMAND</span>
                             <button onclick="copyToClipboard(this.parentElement.nextElementSibling.innerText, this)" class="copy-btn"><span class="material-icons text-base align-middle">content_copy</span></button>
                         </h4>
-                        <pre class="bg-gray-900 text-white p-2 text-xs overflow-auto"><code>${curlCommand}</code></pre>
+                        <pre class="bg-[#000000] text-white p-2 text-xs overflow-auto"><code>${curlCommand}</code></pre>
                     </div>
                     <div>
                         <h4 class="block-title">
                              <span><span class="material-icons text-sm mr-2 align-middle">storage</span>SERVER RESPONSE</span>
                              <button onclick="copyToClipboard(document.getElementById('response-body-${catIndex}-${endpointIndex}').innerText, this)" class="copy-btn"><span class="material-icons text-base align-middle">content_copy</span></button>
                         </h4>
-                        <div id="response-body-${catIndex}-${endpointIndex}" class="bg-gray-900 text-white p-2 text-xs">
+                        <div id="response-body-${catIndex}-${endpointIndex}" class="bg-[#000000] text-white p-2 text-xs">
                             Loading...
                         </div>
                     </div>
@@ -491,12 +491,12 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
                     html += `
                     <div class="category-group" data-category="${category.name}">
                         <div class="mb-2">
-                            <div class="bg-white border border-gray-200 hover:border-gray-600 transition-colors duration-150">
+                            <div class="bg-[#141416] border border-[#2A2A2E] hover:border-[#3A3A3E] transition-colors duration-150">
                                 <button onclick="toggleCategory(${catIndex})" class="w-full px-4 py-3 text-left flex items-center justify-between transition-colors duration-150">
-                                    <h2 class="font-bold flex items-center text-slate-800">
-                                        <span class="material-icons text-xl mr-4 text-white bg-slate-900 py-1 px-2">folder</span>
-                                        <span class="truncate max-w-xs text-sm text-slate-900">${category.name}</span>
-                                        <span class="ml-2 text-xs text-gray-600">(${category.items.length})</span>
+                                    <h2 class="font-bold flex items-center text-[#D0D0D5]">
+                                        <span class="material-icons text-xl mr-4 text-white bg-[#000000] py-1 px-2">folder</span>
+                                        <span class="truncate max-w-xs text-sm text-[#F5F5F7]">${category.name}</span>
+                                        <span class="ml-2 text-xs text-[#8A8A93]">(${category.items.length})</span>
                                     </h2>
                                     <span class="material-icons transition-transform duration-150" id="category-icon-${catIndex}">expand_more</span>
                                 </button>
@@ -511,18 +511,18 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
                             'ready': 'bg-green-200 text-green',
                             'deprecated': 'bg-yellow-500/20 text-yellow-400',
                         };
-                        const statusClass = statusClasses[item.status] || 'bg-gray-600';
+                        const statusClass = statusClasses[item.status] || 'bg-[#1C1C1F]';
 
                         const methodClasses = {
-                            'GET': 'bg-slate-900',
-                            'POST': 'bg-slate-900',
+                            'GET': 'bg-[#000000]',
+                            'POST': 'bg-[#000000]',
                             'PUT': 'bg-yellow-600',
                             'DELETE': 'bg-red-600'
                         };
-                        const methodClass = methodClasses[method] || 'bg-gray-600';
+                        const methodClass = methodClasses[method] || 'bg-[#1C1C1F]';
 
                         html += `
-                                    <div id="${item.path.split('/').pop()}" class="border-t border-gray-200 api-item" 
+                                    <div id="${item.path.split('/').pop()}" class="border-t border-[#2A2A2E] api-item" 
                                          data-method="${method}"
                                          data-path="${path}"
                                          data-alias="${item.name}"
@@ -534,9 +534,9 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
                                                     ${method}
                                                 </span>
                                                 <div class="flex flex-col min-w-0 flex-1">
-                                                    <span class="font-semibold truncate max-w-[90%] font-mono text-sm text-slate-800" title="${path}">${path}</span>
+                                                    <span class="font-semibold truncate max-w-[90%] font-mono text-sm text-[#D0D0D5]" title="${path}">${path}</span>
                                                     <div class="flex items-center">
-                                                        <span class="text-xs text-slate-600 truncate max-w-[90%]" title="${item.name}">${item.name}</span>
+                                                        <span class="text-xs text-[#8A8A93] truncate max-w-[90%]" title="${item.name}">${item.name}</span>
                                                         <span class="ml-2 px-2 py-0.5 text-xs rounded ${statusClass}">${item.status}</span>
                                                     </div>
                                                 </div>
@@ -544,15 +544,15 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
                                             <span class="material-icons transition-transform duration-150 flex-shrink-0" id="endpoint-icon-${catIndex}-${endpointIndex}">expand_more</span>
                                         </button>
                                         
-                                        <div id="endpoint-${catIndex}-${endpointIndex}" class="hidden bg-gray-50 p-4 border-t border-gray-200 space-y-4">
+                                        <div id="endpoint-${catIndex}-${endpointIndex}" class="hidden bg-[#1C1C1F] p-4 border-t border-[#2A2A2E] space-y-4">
                                             <div class="mb-3">
-                                                <div class="text-slate-600 text-xs">${item.desc}</div>
+                                                <div class="text-[#8A8A93] text-xs">${item.desc}</div>
                                             </div>
                                             `;
                         if (item.status !== 'deprecated') {
                             html += `
                                                 <div>
-                                                    <div class="text-gray-700 font-bold text-xs mb-2 flex items-center">
+                                                    <div class="text-[#B0B0B8] font-bold text-xs mb-2 flex items-center">
                                                         <span class="material-icons text-sm mr-1">play_arrow</span>
                                                         TRY IT OUT
                                                     </div>
@@ -565,15 +565,15 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
                                     const schema = param.schema || {};
                                     const isReq = !!param.required;
                                     const label = `${param.name} ${isReq ? '<span class="text-red-500">*</span>' : ''}`;
-                                    const desc = param.description ? `<div class="text-[10px] text-gray-500 mt-1">${param.description}</div>` : '';
+                                    const desc = param.description ? `<div class="text-[10px] text-[#8A8A93] mt-1">${param.description}</div>` : '';
                                     const placeholder = (schema.example ?? schema.default ?? '') + '';
 
                                     // enum => select
                                     if (Array.isArray(schema.enum) && schema.enum.length) {
                                         html += `
                                             <div>
-                                              <label class="block text-xs font-medium text-slate-700 mb-2">${label}</label>
-                                              <select name="${param.name}" class="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-gray-600 bg-white" ${isReq ? 'required' : ''}>
+                                              <label class="block text-xs font-medium text-[#B0B0B8] mb-2">${label}</label>
+                                              <select name="${param.name}" class="w-full px-3 py-2 border border-[#2A2A2E] text-sm focus:outline-none focus:border-[#3A3A3E] bg-[#141416]" ${isReq ? 'required' : ''}>
                                                 ${schema.enum.map(v => `<option value="${String(v)}">${String(v)}</option>`).join('')}
                                               </select>
                                               ${desc}
@@ -585,8 +585,8 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
                                         if (schema.type === 'boolean') {
                                             html += `
                                               <div>
-                                                <label class="block text-xs font-medium text-slate-700 mb-2">${label}</label>
-                                                <select name="${param.name}" class="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-gray-600 bg-white" ${isReq ? 'required' : ''}>
+                                                <label class="block text-xs font-medium text-[#B0B0B8] mb-2">${label}</label>
+                                                <select name="${param.name}" class="w-full px-3 py-2 border border-[#2A2A2E] text-sm focus:outline-none focus:border-[#3A3A3E] bg-[#141416]" ${isReq ? 'required' : ''}>
                                                   <option value="true">true</option>
                                                   <option value="false">false</option>
                                                 </select>
@@ -595,9 +595,9 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
                                         } else {
                                             html += `
                                               <div>
-                                                <label class="block text-xs font-medium text-slate-700 mb-2">${label}</label>
+                                                <label class="block text-xs font-medium text-[#B0B0B8] mb-2">${label}</label>
                                                 <input type="${type}" name="${param.name}"
-                                                  class="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-gray-600 bg-white placeholder:text-slate-400"
+                                                  class="w-full px-3 py-2 border border-[#2A2A2E] text-sm focus:outline-none focus:border-[#3A3A3E] bg-[#141416] placeholder:text-[#6A6A72]"
                                                   placeholder="${placeholder.replace(/"/g,'&quot;')}" ${isReq ? 'required' : ''}>
                                                 ${desc}
                                               </div>`;
@@ -620,7 +620,7 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
                                         const prop = schema.properties[propName] || {};
                                         const isRequired = required.includes(propName);
                                         const label = `${propName} ${isRequired ? '<span class="text-red-500">*</span>' : ''}`;
-                                        const desc = prop.description ? `<div class="text-[10px] text-slate-500 mt-1">${prop.description}</div>` : '';
+                                        const desc = prop.description ? `<div class="text-[10px] text-[#8A8A93] mt-1">${prop.description}</div>` : '';
                                         const placeholder = (prop.example ?? prop.default ?? '') + '';
                                         const isFile = prop.format === 'binary';
 
@@ -634,17 +634,17 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
                                             }
                                             html += `
                                                 <div>
-                                                    <label class="block text-xs font-medium text-slate-700 mb-2">${label}</label>
+                                                    <label class="block text-xs font-medium text-[#B0B0B8] mb-2">${label}</label>
                                                     <input type="file" name="${propName}" ${accept}
-                                                        class="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-gray-600 bg-white"
+                                                        class="w-full px-3 py-2 border border-[#2A2A2E] text-sm focus:outline-none focus:border-[#3A3A3E] bg-[#141416]"
                                                         ${isRequired ? 'required' : ''}>
                                                     ${desc}
                                                 </div>`;
                                         } else if (Array.isArray(prop.enum) && prop.enum.length) {
                                             html += `
                                                 <div>
-                                                    <label class="block text-xs font-medium text-slate-700 mb-2">${label}</label>
-                                                    <select name="${propName}" class="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-gray-600 bg-white" ${isRequired ? 'required' : ''}>
+                                                    <label class="block text-xs font-medium text-[#B0B0B8] mb-2">${label}</label>
+                                                    <select name="${propName}" class="w-full px-3 py-2 border border-[#2A2A2E] text-sm focus:outline-none focus:border-[#3A3A3E] bg-[#141416]" ${isRequired ? 'required' : ''}>
                                                         ${prop.enum.map(v => `<option value="${String(v)}">${String(v)}</option>`).join('')}
                                                     </select>
                                                     ${desc}
@@ -652,8 +652,8 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
                                         } else if (prop.type === 'boolean') {
                                             html += `
                                                 <div>
-                                                    <label class="block text-xs font-medium text-slate-700 mb-2">${label}</label>
-                                                    <select name="${propName}" class="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-gray-600 bg-white" ${isRequired ? 'required' : ''}>
+                                                    <label class="block text-xs font-medium text-[#B0B0B8] mb-2">${label}</label>
+                                                    <select name="${propName}" class="w-full px-3 py-2 border border-[#2A2A2E] text-sm focus:outline-none focus:border-[#3A3A3E] bg-[#141416]" ${isRequired ? 'required' : ''}>
                                                         <option value="true">true</option>
                                                         <option value="false">false</option>
                                                     </select>
@@ -666,9 +666,9 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
                                             }
                                             html += `
                                                 <div>
-                                                    <label class="block text-xs font-medium text-slate-700 mb-2">${label}</label>
+                                                    <label class="block text-xs font-medium text-[#B0B0B8] mb-2">${label}</label>
                                                     <input type="${inputType}" name="${propName}"
-                                                        class="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-gray-600 bg-white placeholder:text-slate-400"
+                                                        class="w-full px-3 py-2 border border-[#2A2A2E] text-sm focus:outline-none focus:border-[#3A3A3E] bg-[#141416] placeholder:text-[#6A6A72]"
                                                         placeholder="${placeholder.replace(/"/g, '&quot;')}" ${isRequired ? 'required' : ''}>
                                                     ${desc}
                                                 </div>`;
@@ -680,19 +680,19 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
                                 if (content['application/json']) {
                                     html += `
                                           <div>
-                                            <label class="block text-xs font-medium text-slate-700 mb-2">Body (application/json)</label>
-                                            <textarea name="__raw_json__" rows="6" class="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-gray-600 bg-white font-mono placeholder:text-slate-400" placeholder='{"key":"value"}'></textarea>
-                                            <div class="text-[10px] text-slate-500 mt-1">Masukkan JSON valid. Jika diisi, body lain akan diabaikan.</div>
+                                            <label class="block text-xs font-medium text-[#B0B0B8] mb-2">Body (application/json)</label>
+                                            <textarea name="__raw_json__" rows="6" class="w-full px-3 py-2 border border-[#2A2A2E] text-sm focus:outline-none focus:border-[#3A3A3E] bg-[#141416] font-mono placeholder:text-[#6A6A72]" placeholder='{"key":"value"}'></textarea>
+                                            <div class="text-[10px] text-[#8A8A93] mt-1">Masukkan JSON valid. Jika diisi, body lain akan diabaikan.</div>
                                           </div>`;
                                 }
                             }
 
                             html += `
                                                             </div>
-                                                            <button type="submit" class="bg-gray-800 hover:bg-gray-700 font-semibold text-white px-6 py-2 text-xs font-medium transition-colors duration-150">
+                                                            <button type="submit" class="bg-[#0A0A0B] hover:bg-[#141416] font-semibold text-white px-6 py-2 text-xs font-medium transition-colors duration-150">
                                                                 Execute
                                                             </button>
-                                                            <button type="button" id="clear-${catIndex}-${endpointIndex}" onclick="clearResponse(${catIndex}, ${endpointIndex})" class="hidden bg-white border border-gray-200 hover:border-gray-600 font-semibold text-slate-900 px-6 py-2 text-xs font-medium transition-colors duration-150 ml-2">
+                                                            <button type="button" id="clear-${catIndex}-${endpointIndex}" onclick="clearResponse(${catIndex}, ${endpointIndex})" class="hidden bg-[#141416] border border-[#2A2A2E] hover:border-[#3A3A3E] font-semibold text-[#F5F5F7] px-6 py-2 text-xs font-medium transition-colors duration-150 ml-2">
                                                                 Clear
                                                             </button>
                                                         </form>
@@ -704,110 +704,110 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
 
                         html += `
                                             <div id="response-${catIndex}-${endpointIndex}" class="hidden mt-4">
-                                                <div class="text-gray-700 font-bold text-xs mb-2 flex items-center">
+                                                <div class="text-[#B0B0B8] font-bold text-xs mb-2 flex items-center">
                                                     <span class="material-icons text-sm mr-1">code</span>
                                                     RESPONSE
                                                 </div>
-                                                <div id="response-content-${catIndex}-${endpointIndex}" class="bg-gray-50 text-xs p-4 border border-gray-200">
+                                                <div id="response-content-${catIndex}-${endpointIndex}" class="bg-[#1C1C1F] text-xs p-4 border border-[#2A2A2E]">
                                                     <!-- Response will be rendered here by executeRequest -->
                                                 </div>
                                             </div>
                                             
                                             <div class="mt-4">
-                                                <div class="text-gray-700 font-bold text-xs mb-2 flex items-center">
+                                                <div class="text-[#B0B0B8] font-bold text-xs mb-2 flex items-center">
                                                     <span class="material-icons text-sm mr-1">list</span>
                                                     HTTP STATUS CODES
                                                 </div>
-                                                <div class="bg-white border border-gray-200">
+                                                <div class="bg-[#141416] border border-[#2A2A2E]">
                                                     <div class="overflow-x-auto">
                                                         <table class="w-full text-xs">
-                                                            <thead class="bg-gray-50 border-b border-gray-200">
+                                                            <thead class="bg-[#1C1C1F] border-b border-[#2A2A2E]">
                                                                 <tr>
-                                                                    <th class="px-4 py-2 text-left font-semibold text-slate-700">Code</th>
-                                                                    <th class="px-4 py-2 text-left font-semibold text-slate-700">Description</th>
+                                                                    <th class="px-4 py-2 text-left font-semibold text-[#B0B0B8]">Code</th>
+                                                                    <th class="px-4 py-2 text-left font-semibold text-[#B0B0B8]">Description</th>
                                                                 </tr>
                                                             </thead>
-                                                            <tbody class="divide-y divide-gray-200">
-                                                                <tr class="hover:bg-gray-50">
+                                                            <tbody class="divide-y divide-[#2A2A2E]">
+                                                                <tr class="hover:bg-[#1C1C1F]">
                                                                     <td class="px-4 py-2">
                                                                         <div class="flex items-center">
                                                                             <span class="material-icons text-green-600 text-sm mr-2">check_circle</span>
                                                                             <span class="font-mono font-semibold text-green-600">200</span>
                                                                         </div>
                                                                     </td>
-                                                                    <td class="px-4 py-2 text-slate-600">OK - Request successful</td>
+                                                                    <td class="px-4 py-2 text-[#8A8A93]">OK - Request successful</td>
                                                                 </tr>
-                                                                <tr class="hover:bg-gray-50">
+                                                                <tr class="hover:bg-[#1C1C1F]">
                                                                     <td class="px-4 py-2">
                                                                         <div class="flex items-center">
                                                                             <span class="material-icons text-red-600 text-sm mr-2">error</span>
                                                                             <span class="font-mono font-semibold text-red-600">400</span>
                                                                         </div>
                                                                     </td>
-                                                                    <td class="px-4 py-2 text-slate-600">Bad Request - Invalid parameters or missing required fields</td>
+                                                                    <td class="px-4 py-2 text-[#8A8A93]">Bad Request - Invalid parameters or missing required fields</td>
                                                                 </tr>
-                                                                <tr class="hover:bg-gray-50">
+                                                                <tr class="hover:bg-[#1C1C1F]">
                                                                     <td class="px-4 py-2">
                                                                         <div class="flex items-center">
                                                                             <span class="material-icons text-red-600 text-sm mr-2">error</span>
                                                                             <span class="font-mono font-semibold text-red-600">401</span>
                                                                         </div>
                                                                     </td>
-                                                                    <td class="px-4 py-2 text-slate-600">Unauthorized - Missing or invalid API key</td>
+                                                                    <td class="px-4 py-2 text-[#8A8A93]">Unauthorized - Missing or invalid API key</td>
                                                                 </tr>
-                                                                <tr class="hover:bg-gray-50">
+                                                                <tr class="hover:bg-[#1C1C1F]">
                                                                     <td class="px-4 py-2">
                                                                         <div class="flex items-center">
                                                                             <span class="material-icons text-red-600 text-sm mr-2">error</span>
                                                                             <span class="font-mono font-semibold text-red-600">403</span>
                                                                         </div>
                                                                     </td>
-                                                                    <td class="px-4 py-2 text-slate-600">Forbidden - You do not have permission to access this resource</td>
+                                                                    <td class="px-4 py-2 text-[#8A8A93]">Forbidden - You do not have permission to access this resource</td>
                                                                 </tr>
-                                                                <tr class="hover:bg-gray-50">
+                                                                <tr class="hover:bg-[#1C1C1F]">
                                                                     <td class="px-4 py-2">
                                                                         <div class="flex items-center">
                                                                             <span class="material-icons text-red-600 text-sm mr-2">error</span>
                                                                             <span class="font-mono font-semibold text-red-600">404</span>
                                                                         </div>
                                                                     </td>
-                                                                    <td class="px-4 py-2 text-slate-600">Not Found - The requested resource could not be found</td>
+                                                                    <td class="px-4 py-2 text-[#8A8A93]">Not Found - The requested resource could not be found</td>
                                                                 </tr>
-                                                                <tr class="hover:bg-gray-50">
+                                                                <tr class="hover:bg-[#1C1C1F]">
                                                                     <td class="px-4 py-2">
                                                                         <div class="flex items-center">
                                                                             <span class="material-icons text-red-600 text-sm mr-2">error</span>
                                                                             <span class="font-mono font-semibold text-red-600">405</span>
                                                                         </div>
                                                                     </td>
-                                                                    <td class="px-4 py-2 text-slate-600">Method Not Allowed - HTTP method not supported for this resource</td>
+                                                                    <td class="px-4 py-2 text-[#8A8A93]">Method Not Allowed - HTTP method not supported for this resource</td>
                                                                 </tr>
-                                                                <tr class="hover:bg-gray-50">
+                                                                <tr class="hover:bg-[#1C1C1F]">
                                                                     <td class="px-4 py-2">
                                                                         <div class="flex items-center">
                                                                             <span class="material-icons text-orange-500 text-sm mr-2">warning</span>
                                                                             <span class="font-mono font-semibold text-orange-500">429</span>
                                                                         </div>
                                                                     </td>
-                                                                    <td class="px-4 py-2 text-slate-600">Too Many Requests - You have hit the rate limit</td>
+                                                                    <td class="px-4 py-2 text-[#8A8A93]">Too Many Requests - You have hit the rate limit</td>
                                                                 </tr>
-                                                                <tr class="hover:bg-gray-50">
+                                                                <tr class="hover:bg-[#1C1C1F]">
                                                                     <td class="px-4 py-2">
                                                                         <div class="flex items-center">
                                                                             <span class="material-icons text-red-600 text-sm mr-2">error</span>
                                                                             <span class="font-mono font-semibold text-red-600">500</span>
                                                                         </div>
                                                                     </td>
-                                                                    <td class="px-4 py-2 text-slate-600">Internal Server Error - Something went wrong on our end</td>
+                                                                    <td class="px-4 py-2 text-[#8A8A93]">Internal Server Error - Something went wrong on our end</td>
                                                                 </tr>
-                                                                <tr class="hover:bg-gray-50">
+                                                                <tr class="hover:bg-[#1C1C1F]">
                                                                     <td class="px-4 py-2">
                                                                         <div class="flex items-center">
                                                                             <span class="material-icons text-red-600 text-sm mr-2">error</span>
                                                                             <span class="font-mono font-semibold text-red-600">503</span>
                                                                         </div>
                                                                     </td>
-                                                                    <td class="px-4 py-2 text-slate-600">Service Unavailable - The server is temporarily unavailable</td>
+                                                                    <td class="px-4 py-2 text-[#8A8A93]">Service Unavailable - The server is temporarily unavailable</td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -857,17 +857,17 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
             if (!notif.read) unreadCount++;
 
             const notifElement = document.createElement('div');
-            notifElement.className = `bg-white border border-gray-200 p-4 text-xs will-fade-in fade-in ${notif.read ? 'opacity-60' : ''}`;
+            notifElement.className = `bg-[#141416] border border-[#2A2A2E] p-4 text-xs will-fade-in fade-in ${notif.read ? 'opacity-60' : ''}`;
             notifElement.style.animationDelay = `${index * 50}ms`;
             notifElement.innerHTML = `
                 <div class="flex justify-between items-start">
                     <div class="flex-1">
-                        <p class="font-bold text-slate-800 mb-1">${notif.title || 'Tanpa Judul'}</p>
-                        <p class="text-slate-600">${notif.message || '-'}</p>
+                        <p class="font-bold text-[#D0D0D5] mb-1">${notif.title || 'Tanpa Judul'}</p>
+                        <p class="text-[#8A8A93]">${notif.message || '-'}</p>
                     </div>
                     <div class="flex items-center ml-4 flex-shrink-0">
                         ${!notif.read ? '<div class="w-2 h-2 bg-green-400 rounded-full mr-2" title="Unread"></div>' : ''}
-                        <span class="text-slate-500">${notif.date ? new Date(notif.date).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : '-'}</span>
+                        <span class="text-[#8A8A93]">${notif.date ? new Date(notif.date).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : '-'}</span>
                     </div>
                 </div>
             `;
@@ -884,7 +884,7 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
 
         // Jika tidak ada notifikasi
         if (notifications.length === 0) {
-            notificationsList.innerHTML = '<p class="text-center text-slate-500 text-xs py-4">Tidak ada notifikasi</p>';
+            notificationsList.innerHTML = '<p class="text-center text-[#8A8A93] text-xs py-4">Tidak ada notifikasi</p>';
         }
 
     } catch (error) {
