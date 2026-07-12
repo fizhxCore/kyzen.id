@@ -1,6 +1,12 @@
 const axios = require("axios");
 const yts = require("yt-search");
-const ytdl = require("@distube/ytdl-core");
+const { Innertube } = require("youtubei.js");
+
+let ytClient = null;
+async function getClient() {
+  if (!ytClient) ytClient = await Innertube.create({ generate_session_locally: true });
+  return ytClient;
+}
 
 function safeName(name) {
   return String(name || "audio")
@@ -49,24 +55,27 @@ module.exports = function (app) {
 
       const filename = safeName(`${meta.artist} - ${meta.title}`.trim() || video.title) + ".m4a";
 
-      const info = await ytdl.getInfo(video.url);
-      const audioFormat = ytdl.chooseFormat(info.formats, { quality: "highestaudio", filter: "audioonly" });
+      const yt = await getClient();
+      const info = await yt.getBasicInfo(video.videoId);
+      const format = info.chooseFormat({ type: "audio", quality: "best" });
 
-      if (!audioFormat) {
+      if (!format) {
         return res.status(502).json({ status: false, error: "Format audio tidak ditemukan untuk video ini" });
       }
 
+      const stream = await yt.download(video.videoId, { type: "audio", quality: "best" });
+
       res.writeHead(200, {
-        "Content-Type": audioFormat.mimeType?.split(";")[0] || "audio/mp4",
+        "Content-Type": format.mime_type?.split(";")[0] || "audio/mp4",
         "Content-Disposition": `attachment; filename="${filename}"`,
       });
 
-      const stream = ytdl.downloadFromInfo(info, { format: audioFormat });
-      stream.on("error", (err) => {
+      const nodeStream = require("node:stream").Readable.fromWeb(stream);
+      nodeStream.on("error", (err) => {
         if (!res.headersSent) res.status(500).json({ status: false, error: err.message });
         else res.end();
       });
-      stream.pipe(res);
+      nodeStream.pipe(res);
     } catch (error) {
       res.status(500).json({ status: false, error: error.message });
     }

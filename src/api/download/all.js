@@ -1,10 +1,7 @@
 const crypto = require("crypto");
 const forge = require("node-forge");
 const sharp = require("sharp");
-const fs = require("fs");
-const os = require("os");
-const path = require("path");
-const { execSync } = require("child_process");
+const { createWorker } = require("tesseract.js");
 
 const api = "https://api.snapwc.com";
 const ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
@@ -37,34 +34,29 @@ function decResp(resp, clientPriv) {
   return JSON.parse(Buffer.concat([dec.update(raw.slice(16)), dec.final()]).toString("utf8"));
 }
 
+let ocrWorker = null;
+async function getOcrWorker() {
+  if (!ocrWorker) {
+    ocrWorker = await createWorker("eng");
+    await ocrWorker.setParameters({
+      tessedit_char_whitelist: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+      tessedit_pageseg_mode: "7",
+    });
+  }
+  return ocrWorker;
+}
+
 async function solveCaptcha(imageB64) {
   const raw = Buffer.from(imageB64.replace(/^data:image\/png;base64,/, ""), "base64");
-  const p = path.join(os.tmpdir(), `snapwc-${Date.now()}-${Math.random()}.png`);
-  await sharp(raw).resize(1200, null, { kernel: "lanczos3" }).grayscale().normalize().toFile(p);
+  const processed = await sharp(raw).resize(1200, null, { kernel: "lanczos3" }).grayscale().normalize().toBuffer();
 
+  const worker = await getOcrWorker();
   const attempts = [];
   try {
-    attempts.push(
-      execSync(
-        `tesseract ${p} - -l eng --psm 7 --oem 1 -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 2>/dev/null`,
-        { encoding: "utf8", timeout: 5000 }
-      )
-        .trim()
-        .replace(/\s+/g, "")
-    );
-  } catch (e) {}
-  try {
-    attempts.push(
-      execSync(
-        `tesseract ${p} - -l eng --psm 8 --oem 1 -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 2>/dev/null`,
-        { encoding: "utf8", timeout: 5000 }
-      )
-        .trim()
-        .replace(/\s+/g, "")
-    );
+    const { data } = await worker.recognize(processed);
+    attempts.push((data.text || "").trim().replace(/\s+/g, ""));
   } catch (e) {}
 
-  fs.unlinkSync(p);
   return [...new Set(attempts.filter((x) => x.length === 4))];
 }
 
