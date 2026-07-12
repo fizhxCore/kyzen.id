@@ -1289,6 +1289,231 @@
           }
         }
       }
+    },
+    "/search/meme": {
+      "get": {
+        "summary": "Search Meme",
+        "description": "Cari meme (gambar/video) berdasarkan kata kunci via findthatmeme.com",
+        "tags": [
+          "Image"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Kata kunci pencarian meme",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Offset pagination",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean"
+                    },
+                    "result": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parameter q tidak disertakan"
+          },
+          "502": {
+            "description": "Gagal mengambil data dari sumber"
+          }
+        }
+      }
+    },
+    "/search/stickerpack": {
+      "get": {
+        "summary": "Search Sticker Pack",
+        "description": "Cari paket sticker WhatsApp/Telegram berdasarkan kata kunci via getstickerpack.com",
+        "tags": [
+          "Image"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Kata kunci pencarian sticker pack",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean"
+                    },
+                    "result": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parameter q tidak disertakan"
+          }
+        }
+      }
+    },
+    "/image/igqc": {
+      "get": {
+        "summary": "Instagram Quote Card",
+        "description": "Membuat gambar kartu kutipan bergaya Instagram DM dengan reaksi emoji",
+        "tags": [
+          "Image"
+        ],
+        "parameters": [
+          {
+            "name": "txt",
+            "in": "query",
+            "description": "Isi teks kutipan (wajib jika imgUrl kosong)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "imgUrl",
+            "in": "query",
+            "description": "URL gambar yang disisipkan (wajib jika txt kosong)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          {
+            "name": "time",
+            "in": "query",
+            "description": "Teks waktu di pojok atas (contoh: SEN 12.00)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil, gambar png dikirim langsung",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parameter tidak lengkap"
+          }
+        }
+      }
+    },
+    "/image/ignote": {
+      "get": {
+        "summary": "Instagram Note",
+        "description": "Membuat gambar bubble catatan (Notes) bergaya Instagram, maksimal 7 kata",
+        "tags": [
+          "Image"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "description": "Nama pengguna yang ditampilkan",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "text",
+            "in": "query",
+            "description": "Isi catatan (maks 7 kata, lebih dari itu otomatis jadi 'max')",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "time",
+            "in": "query",
+            "description": "Teks waktu (contoh: 3m)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "3m"
+            }
+          },
+          {
+            "name": "ppUrl",
+            "in": "query",
+            "description": "URL foto profil",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil, gambar png dikirim langsung",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parameter tidak lengkap"
+          }
+        }
+      }
     }
   }
 }
