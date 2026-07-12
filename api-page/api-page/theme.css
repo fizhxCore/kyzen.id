@@ -1,0 +1,157 @@
+/* ============================================
+   KYZEN.ID — Shared Theme
+   Monokrom + aksen teal, terinspirasi anime OP:
+   kontras tinggi, garis geometris, tipografi tegas
+   ============================================ */
+
+:root {
+  --k-bg: #0A0A0B;
+  --k-bg-elevated: #141416;
+  --k-surface: #1C1C1F;
+  --k-border: #2A2A2E;
+  --k-line: rgba(255, 255, 255, 0.08);
+
+  --k-white: #F5F5F7;
+  --k-dim: #8A8A93;
+  --k-dimmer: #55555C;
+
+  --k-teal: #4DFFDF;
+  --k-teal-dim: #2A8C7C;
+  --k-teal-glow: rgba(77, 255, 223, 0.25);
+
+  --k-danger: #FF5C6C;
+  --k-warn: #FFD166;
+
+  --k-font-display: 'Zen Kaku Gothic New', 'Archivo Black', sans-serif;
+  --k-font-mono: 'IBM Plex Mono', monospace;
+}
+
+.k-diamond-field {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0.5;
+}
+
+.k-diamond-field::before,
+.k-diamond-field::after {
+  content: '';
+  position: absolute;
+  border: 1px solid var(--k-line);
+  transform: rotate(45deg);
+}
+
+.k-diamond-field::before {
+  width: 340px;
+  height: 340px;
+  top: -100px;
+  right: -100px;
+}
+
+.k-diamond-field::after {
+  width: 220px;
+  height: 220px;
+  bottom: 8%;
+  left: -80px;
+}
+
+.k-line-diag {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, var(--k-line), transparent);
+  height: 1px;
+  width: 140%;
+  transform: rotate(-18deg);
+}
+
+.k-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--k-teal);
+  border: 1px solid var(--k-teal-dim);
+  padding: 4px 10px;
+  border-radius: 2px;
+  background: rgba(77, 255, 223, 0.06);
+}
+
+.k-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--k-font-mono);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 13px 28px;
+  border-radius: 2px;
+  border: 1px solid var(--k-teal);
+  color: var(--k-bg);
+  background: var(--k-teal);
+  cursor: pointer;
+  text-decoration: none;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.k-btn:hover { filter: brightness(1.1); }
+.k-btn:active { transform: scale(0.98); }
+
+.k-btn-outline {
+  background: transparent;
+  color: var(--k-white);
+  border: 1px solid var(--k-border);
+}
+
+.k-btn-outline:hover { border-color: var(--k-teal); color: var(--k-teal); }
+
+.k-card {
+  background: var(--k-surface);
+  border: 1px solid var(--k-border);
+  border-radius: 2px;
+  position: relative;
+}
+
+.k-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 24px; height: 1px;
+  background: var(--k-teal);
+}
+
+.k-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 1px; height: 24px;
+  background: var(--k-teal);
+}
+
+body.k-theme {
+  background: var(--k-bg);
+  color: var(--k-white);
+  font-family: var(--k-font-mono);
+}
+
+.k-title {
+  font-family: var(--k-font-display);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--k-white);
+}
+
+.k-eyebrow {
+  font-family: var(--k-font-mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--k-teal);
+}
