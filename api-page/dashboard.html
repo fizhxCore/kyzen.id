@@ -318,7 +318,7 @@
     updateSwitch(next);
     const result = await api('/dev/api/maintenance', { method: 'POST', body: JSON.stringify({ enabled: next }) });
     if (result.status === false) {
-      alert('Gagal ubah maintenance mode: ' + (result.error || 'unknown error'));
+      alert('Gagal ubah maintenance mode: ' + (result.error || 'unknown error') + (result.detail ? '\n\nDetail: ' + result.detail : ''));
       updateSwitch(!next);
     }
   }
