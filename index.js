@@ -5,8 +5,12 @@ const cors = require("cors");
 const path = require("path");
 require("dotenv").config();
 
+const stats = require("./src/lib/stats");
+const maintenanceLib = require("./src/lib/maintenance");
+
 const app = express();
 const PORT = process.env.PORT || 4000;
+const DEV_SECRET = process.env.DEV_SECRET || "";
 
 // ========== DISCORD WEBHOOK ==========
 const WEBHOOK_URL = process.env.WEBHOOK_URL || ""
@@ -73,6 +77,29 @@ app.set("json spaces", 2);
 // ========== STATIC FILES ==========
 app.use("/", express.static(path.join(__dirname, "api-page")));
 app.use("/src", express.static(path.join(__dirname, "src")));
+
+// ========== MAINTENANCE MODE CHECK ==========
+function isDevAuthorized(req) {
+    if (!DEV_SECRET) return false;
+    const key = req.headers["x-dev-key"] || req.query.key;
+    return key === DEV_SECRET;
+}
+
+app.use(async (req, res, next) => {
+    // Rute /dev/* & dashboard sendiri tetap bisa diakses walau maintenance nyala
+    if (req.path.startsWith("/dev/")) return next();
+
+    const isOn = await maintenanceLib.isMaintenanceOn();
+    if (!isOn) return next();
+
+    const wantsJson = req.headers.accept?.includes("application/json") || req.path.startsWith("/download") || req.path.startsWith("/image") || req.path.startsWith("/ai") || req.path.startsWith("/anime") || req.path.startsWith("/news");
+
+    if (wantsJson) {
+        return res.status(503).json({ status: false, maintenance: true, message: "API sedang dalam perbaikan, coba lagi nanti" });
+    }
+
+    return res.status(503).sendFile(path.join(__dirname, "api-page", "maintenance.html"));
+});
 
 // ========== LOAD OPENAPI ==========
 const openApiPath = path.join(__dirname, "./src/openapi.json");
@@ -150,6 +177,7 @@ app.use(async (req, res, next) => {
             const avg = (endpointStats[endpoint].totalDuration / endpointStats[endpoint].total).toFixed(2);
 
             sendLog({ ip, method, endpoint, status, query, duration });
+            stats.recordRequest(endpoint, res.statusCode);
 
             console.log(
                 chalk[isError ? "red" : "green"](
@@ -190,6 +218,36 @@ sendNotification(`🟢 Server started. Total Routes Loaded: ${totalRoutes}`);
 // ========== MAIN ROUTES ==========
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "api-page", "index.html")));
 app.get("/docs", (req, res) => res.sendFile(path.join(__dirname, "api-page", "docs.html")));
+
+// ========== DEV DASHBOARD ==========
+app.get("/dev/dashboard", (req, res) => {
+    if (!isDevAuthorized(req)) {
+        return res.status(401).sendFile(path.join(__dirname, "api-page", "dashboard-login.html"));
+    }
+    res.sendFile(path.join(__dirname, "api-page", "dashboard.html"));
+});
+
+app.get("/dev/api/stats", async (req, res) => {
+    if (!isDevAuthorized(req)) return res.status(401).json({ status: false, error: "Unauthorized" });
+    try {
+        const data = await stats.getStats();
+        const maintenance = await maintenanceLib.isMaintenanceOn();
+        res.json({ status: true, maintenance, ...data });
+    } catch (error) {
+        res.status(500).json({ status: false, error: error.message });
+    }
+});
+
+app.post("/dev/api/maintenance", async (req, res) => {
+    if (!isDevAuthorized(req)) return res.status(401).json({ status: false, error: "Unauthorized" });
+    try {
+        const { enabled } = req.body;
+        await maintenanceLib.setMaintenance(!!enabled);
+        res.json({ status: true, maintenance: !!enabled });
+    } catch (error) {
+        res.status(500).json({ status: false, error: error.message });
+    }
+});
 
 app.use((req, res) => res.status(404).sendFile(path.join(__dirname, "api-page", "404.html")));
 
