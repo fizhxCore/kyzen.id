@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/theme.css">
 <style>
   :root {
     --bg: #0A0A0B;
@@ -210,13 +211,14 @@
 </style>
 </head>
 <body>
+<div class="k-circle-arc" style="width:460px;height:460px;top:-240px;left:20%;"></div>
 <div class="wrap">
   <header>
     <div class="brand">
       <h1>KYZEN.ID <span style="color:var(--teal)">/</span> CONTROL</h1>
       <span>internal — dev only</span>
     </div>
-    <div class="live-dot"><i></i> live</div>
+    <div class="live-dot k-corner-box" style="position:relative;padding:6px 10px;"><span class="k-corner tl"></span><span class="k-corner br"></span><i></i> live</div>
   </header>
 
   <div id="loading" class="loading">memuat data panel...</div>

@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/theme.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/languages/json.min.js"></script>
@@ -119,6 +120,9 @@
 
 <body class="bg-gradient-to-br from-[#0A0A0B] via-[#0A0A0B] to-[#141416] text-[#D0D0D5] antialiased font-mono min-h-screen">
 
+    <div class="k-diamond-field"></div>
+    <div class="k-circle-arc" style="width:420px;height:420px;top:-220px;right:-140px;"></div>
+    <div class="k-diamond-sm" style="width:20px;height:20px;top:10%;right:22%;"></div>
     <aside id="sidebar" class="fixed top-0 right-0 h-full w-64 bg-[#141416] text-[#D0D0D5] border-l border-[#2A2A2E] transform translate-x-full duration-300 ease-in-out z-[100]">
         <div class="px-8 py-4 border-b border-[#2A2A2E] flex items-center justify-end">
             <button id="sidebarClose" class="py-2 px-3 border border-[#2A2A2E] text-[#D0D0D5] hover:border-[#3A3A3E] flex items-center justify-center">
@@ -155,7 +159,8 @@
                     <h2 class="text-lg text-[#D0D0D5] font-semibold leading-none">Kyzen.id API</h2>
                     <p class="text-xs text-[#8A8A93] leading-none">API Documentation</p>
                 </div>
-                <div class="px-3 py-1.5 bg-[#000000] text-white text-xs font-semibold">
+                <div class="k-corner-box relative px-3 py-1.5 bg-[#4DFFDF] text-[#0A0A0B] text-xs font-semibold">
+                <span class="k-corner tl"></span><span class="k-corner br"></span>
                 v1.0
             </div>
             </div>
@@ -508,16 +513,16 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
                         const path = item.path;
 
                         const statusClasses = {
-                            'ready': 'bg-green-200 text-green',
+                            'ready': 'bg-[#4DFFDF]/15 text-[#4DFFDF] border border-[#4DFFDF]/30',
                             'deprecated': 'bg-yellow-500/20 text-yellow-400',
                         };
                         const statusClass = statusClasses[item.status] || 'bg-[#1C1C1F]';
 
                         const methodClasses = {
-                            'GET': 'bg-[#000000]',
-                            'POST': 'bg-[#000000]',
-                            'PUT': 'bg-yellow-600',
-                            'DELETE': 'bg-red-600'
+                            'GET': 'bg-[#4DFFDF] text-[#0A0A0B]',
+                            'POST': 'bg-[#F5F5F7] text-[#0A0A0B]',
+                            'PUT': 'bg-yellow-600 text-white',
+                            'DELETE': 'bg-red-600 text-white'
                         };
                         const methodClass = methodClasses[method] || 'bg-[#1C1C1F]';
 
@@ -530,7 +535,7 @@ document.addEventListener('DOMContentLoaded', loadNotifications);
                                          data-category="${category.name}">
                                         <button onclick="toggleEndpoint(${catIndex}, ${endpointIndex})" class="w-full px-4 py-3 text-left flex items-center justify-between transition-colors duration-150">
                                             <div class="flex items-center min-w-0 flex-1">
-                                                <span class="inline-block px-3 py-1 text-xs font-semibold text-white mr-3 flex-shrink-0 ${methodClass}">
+                                                <span class="inline-block px-3 py-1 text-xs font-semibold mr-3 flex-shrink-0 ${methodClass}">
                                                     ${method}
                                                 </span>
                                                 <div class="flex flex-col min-w-0 flex-1">

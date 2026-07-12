@@ -57,6 +57,39 @@
   left: -80px;
 }
 
+.k-circle-arc {
+  position: fixed;
+  border: 1px solid var(--k-line);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.k-diamond-sm {
+  position: absolute;
+  border: 1px solid var(--k-teal);
+  opacity: 0.35;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+/* Frame corner brackets — ala viewfinder/photo frame */
+.k-corner-box { position: relative; }
+
+.k-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--k-teal);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.k-corner.tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+.k-corner.tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+.k-corner.bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+.k-corner.br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
 .k-line-diag {
   position: absolute;
   background: linear-gradient(90deg, transparent, var(--k-line), transparent);
