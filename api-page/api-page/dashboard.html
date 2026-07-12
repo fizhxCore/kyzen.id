@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kyzen.id — Control Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0A0B;
+    --bg-panel: #141416;
+    --bg-panel-2: #1C1C1F;
+    --hole: #000000;
+    --orange: #4DFFDF;
+    --yellow: #FFD166;
+    --teal: #4DFFDF;
+    --red: #FF5C6C;
+    --cream: #F5F5F7;
+    --cream-dim: #8A8A93;
+    --border: #2A2A2E;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before, body::after {
+    content: '';
+    position: fixed;
+    border: 1px solid rgba(255,255,255,0.06);
+    transform: rotate(45deg);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::before { width: 300px; height: 300px; top: -80px; right: -80px; }
+  body::after { width: 200px; height: 200px; bottom: 5%; left: -70px; }
+
+  .wrap { max-width: 960px; margin: 0 auto; position: relative; z-index: 1; }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .brand h1 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 22px;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  .brand span {
+    color: var(--cream-dim);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .live-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--cream-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .live-dot i {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 8px var(--teal);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+  .panel {
+    background: var(--bg-panel);
+    border: 2px solid var(--border);
+    border-radius: 2px;
+    padding: 20px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .hazard-strip {
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    border-radius: 2px 2px 0 0;
+    background: linear-gradient(90deg, var(--teal), transparent 70%);
+  }
+
+  /* ── Breaker switch (maintenance toggle) ── */
+  .breaker-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+
+  .breaker-label .tag {
+    display: inline-block; background: var(--hole); color: var(--yellow);
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 3px; margin-bottom: 6px;
+  }
+
+  .breaker-label h2 { font-size: 15px; margin: 0; font-weight: 600; }
+  .breaker-label p { font-size: 12px; color: var(--cream-dim); margin: 4px 0 0; }
+
+  .switch {
+    width: 64px; height: 34px; border-radius: 17px; background: var(--hole);
+    border: 2px solid var(--border); position: relative; cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .switch .knob {
+    position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--teal); transition: transform 0.25s ease, background 0.25s ease;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  }
+
+  .switch.on .knob { transform: translateX(30px); background: var(--red); box-shadow: 0 0 12px var(--red); }
+  .switch.on { border-color: var(--red); }
+
+  /* ── Stat label-tags ── */
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;
+  }
+
+  .stat-tag {
+    background: var(--hole); border-radius: 4px; padding: 14px 16px; border-left: 3px solid var(--orange);
+  }
+
+  .stat-tag .num {
+    font-family: 'Archivo Black', sans-serif; font-size: 26px; color: var(--cream); line-height: 1;
+  }
+
+  .stat-tag .lbl {
+    font-size: 10px; color: var(--cream-dim); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 6px;
+  }
+
+  .stat-tag.warn { border-left-color: var(--yellow); }
+  .stat-tag.danger { border-left-color: var(--red); }
+
+  h3.section-title {
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-dim);
+    margin: 0 0 14px; display: flex; align-items: center; gap: 8px;
+  }
+
+  /* ── Hourly chart ── */
+  .chart {
+    display: flex; align-items: flex-end; gap: 3px; height: 100px; padding-top: 8px;
+  }
+
+  .bar {
+    flex: 1; background: var(--teal); border-radius: 2px 2px 0 0; min-height: 2px;
+    position: relative; transition: background 0.2s;
+  }
+
+  .bar:hover { background: var(--orange); }
+
+  .chart-labels {
+    display: flex; justify-content: space-between; font-size: 9px; color: var(--cream-dim); margin-top: 6px;
+  }
+
+  /* ── Endpoint rows ── */
+  .ep-row {
+    display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px dashed var(--border);
+    font-size: 13px;
+  }
+
+  .ep-row:last-child { border-bottom: none; }
+
+  .ep-name { flex: 1; color: var(--cream); font-weight: 500; }
+  .ep-count { color: var(--cream-dim); font-size: 12px; min-width: 60px; text-align: right; }
+
+  .ep-bar-bg { flex: 2; height: 6px; background: var(--hole); border-radius: 3px; overflow: hidden; }
+  .ep-bar-fill { height: 100%; background: var(--teal); border-radius: 3px; }
+  .ep-bar-fill.danger { background: var(--red); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  @media (max-width: 700px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+
+  .empty { color: var(--cream-dim); font-size: 12px; padding: 8px 0; }
+
+  .loading { text-align: center; padding: 60px 0; color: var(--cream-dim); font-size: 13px; }
+
+  .redis-warning {
+    display: none;
+    background: rgba(255, 92, 108, 0.08); border: 1px solid var(--red); border-radius: 2px;
+    padding: 12px 16px; margin-bottom: 16px; font-size: 12px; color: var(--red);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <h1>KYZEN.ID <span style="color:var(--teal)">/</span> CONTROL</h1>
+      <span>internal — dev only</span>
+    </div>
+    <div class="live-dot"><i></i> live</div>
+  </header>
+
+  <div id="loading" class="loading">memuat data panel...</div>
+
+  <div id="content" style="display:none;">
+
+    <div class="redis-warning" id="redis-warning">
+      Redis belum terhubung. Stats & maintenance mode nggak akan tersimpan. Cek env var UPSTASH_REDIS_REST_URL & UPSTASH_REDIS_REST_TOKEN di Vercel.
+    </div>
+
+    <div class="panel">
+      <div class="hazard-strip"></div>
+      <div class="breaker-row">
+        <div class="breaker-label">
+          <div class="tag">Breaker 01</div>
+          <h2>Maintenance Mode</h2>
+          <p id="maintenance-desc">Semua endpoint aktif normal.</p>
+        </div>
+        <div class="switch" id="maintenance-switch" onclick="toggleMaintenance()">
+          <div class="knob"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 class="section-title">Ringkasan</h3>
+      <div class="stat-grid">
+        <div class="stat-tag">
+          <div class="num" id="stat-today">0</div>
+          <div class="lbl">Request Hari Ini</div>
+        </div>
+        <div class="stat-tag">
+          <div class="num" id="stat-alltime">0</div>
+          <div class="lbl">Request Sepanjang Waktu</div>
+        </div>
+        <div class="stat-tag warn">
+          <div class="num" id="stat-errors-today">0</div>
+          <div class="lbl">Error Hari Ini</div>
+        </div>
+        <div class="stat-tag danger">
+          <div class="num" id="stat-errorrate">0%</div>
+          <div class="lbl">Error Rate (All-time)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 class="section-title">Request — 24 Jam Terakhir</h3>
+      <div class="chart" id="chart"></div>
+      <div class="chart-labels" id="chart-labels"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <h3 class="section-title">Endpoint Tersibuk</h3>
+        <div id="top-endpoints"></div>
+      </div>
+      <div class="panel">
+        <h3 class="section-title">Endpoint Paling Sering Error</h3>
+        <div id="top-errors"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const key = params.get('key') || '';
+
+  async function api(path, opts = {}) {
+    const res = await fetch(path + (path.includes('?') ? '&' : '?') + 'key=' + encodeURIComponent(key), {
+      ...opts,
+      headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) }
+    });
+    return res.json();
+  }
+
+  function renderEpRows(container, list, danger) {
+    if (!list.length) { container.innerHTML = '<div class="empty">Belum ada data.</div>'; return; }
+    const max = Math.max(...list.map(x => x.count));
+    container.innerHTML = list.map(item => `
+      <div class="ep-row">
+        <div class="ep-name">${item.endpoint}</div>
+        <div class="ep-bar-bg"><div class="ep-bar-fill${danger ? ' danger' : ''}" style="width:${(item.count / max * 100).toFixed(0)}%"></div></div>
+        <div class="ep-count">${item.count}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderChart(hourly) {
+    const max = Math.max(...hourly.map(h => h.count), 1);
+    const chart = document.getElementById('chart');
+    const labels = document.getElementById('chart-labels');
+    chart.innerHTML = hourly.map(h => `<div class="bar" style="height:${Math.max((h.count / max * 100), 2)}%" title="${h.hour} — ${h.count} req"></div>`).join('');
+    labels.innerHTML = `<span>${hourly[0]?.hour || ''}</span><span>${hourly[Math.floor(hourly.length/2)]?.hour || ''}</span><span>${hourly[hourly.length-1]?.hour || ''}</span>`;
+  }
+
+  let currentMaintenance = false;
+
+  function updateSwitch(on) {
+    currentMaintenance = on;
+    const sw = document.getElementById('maintenance-switch');
+    const desc = document.getElementById('maintenance-desc');
+    sw.classList.toggle('on', on);
+    desc.textContent = on ? 'Semua endpoint sedang nonaktif (maintenance).' : 'Semua endpoint aktif normal.';
+  }
+
+  async function toggleMaintenance() {
+    const next = !currentMaintenance;
+    updateSwitch(next);
+    const result = await api('/dev/api/maintenance', { method: 'POST', body: JSON.stringify({ enabled: next }) });
+    if (result.status === false) {
+      alert('Gagal ubah maintenance mode: ' + (result.error || 'unknown error') + (result.detail ? '\n\nDetail: ' + result.detail : ''));
+      updateSwitch(!next);
+    }
+  }
+
+  async function load() {
+    const data = await api('/dev/api/stats');
+
+    if (data.status === false) {
+      document.getElementById('loading').innerHTML = '❌ ' + (data.error || 'Gagal memuat data. Cek dev key.');
+      return;
+    }
+
+    document.getElementById('stat-today').textContent = data.totalToday.toLocaleString('id-ID');
+    document.getElementById('stat-alltime').textContent = data.totalAllTime.toLocaleString('id-ID');
+    document.getElementById('stat-errors-today').textContent = data.errorsToday.toLocaleString('id-ID');
+    document.getElementById('stat-errorrate').textContent = data.errorRate + '%';
+
+    renderChart(data.hourly);
+    renderEpRows(document.getElementById('top-endpoints'), data.topEndpoints, false);
+    renderEpRows(document.getElementById('top-errors'), data.topErrors, true);
+    updateSwitch(!!data.maintenance);
+
+    document.getElementById('redis-warning').style.display = data.redisConnected ? 'none' : 'block';
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').style.display = 'block';
+  }
+
+  load();
+  setInterval(load, 15000);
+</script>
+</body>
+</html>
