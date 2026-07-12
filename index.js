@@ -398,7 +398,7 @@ app.get("/dev/api/stats", async (req, res) => {
     try {
         const data = await getDashboardStats();
         const maintenance = await isMaintenanceOn();
-        res.json({ status: true, maintenance, ...data });
+        res.json({ status: true, redisConnected: redisEnabled, maintenance, ...data });
     } catch (error) {
         res.status(500).json({ status: false, error: error.message });
     }
@@ -406,9 +406,15 @@ app.get("/dev/api/stats", async (req, res) => {
 
 app.post("/dev/api/maintenance", async (req, res) => {
     if (!isDevAuthorized(req)) return res.status(401).json({ status: false, error: "Unauthorized" });
+    if (!redisEnabled) {
+        return res.status(503).json({ status: false, error: "Redis belum terhubung. Cek env var UPSTASH_REDIS_REST_URL & UPSTASH_REDIS_REST_TOKEN." });
+    }
     try {
         const { enabled } = req.body;
-        await setMaintenance(!!enabled);
+        const saved = await setMaintenance(!!enabled);
+        if (!saved) {
+            return res.status(500).json({ status: false, error: "Gagal menyimpan status ke Redis" });
+        }
         res.json({ status: true, maintenance: !!enabled });
     } catch (error) {
         res.status(500).json({ status: false, error: error.message });
