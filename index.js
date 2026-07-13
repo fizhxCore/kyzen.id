@@ -104,6 +104,7 @@ async function recordRequestStat(endpoint, statusCode) {
     const isError = statusCode >= 400;
     const today = todayKey();
     const hour = hourKey();
+    const endpointHourKey = `stats:ep_hourly:${endpoint}:${hour}`;
 
     try {
         await Promise.all([
@@ -112,14 +113,57 @@ async function recordRequestStat(endpoint, statusCode) {
             redisSafeIncr(`stats:hourly:${hour}`),
             redisSafeHIncrBy("stats:endpoints:all_time", endpoint, 1),
             redisSafeHIncrBy(`stats:endpoints:${today}`, endpoint, 1),
+            redisSafeHIncrBy(endpointHourKey, "total", 1),
             isError ? redisSafeIncr("stats:errors:all_time") : Promise.resolve(),
             isError ? redisSafeIncr(`stats:errors:${today}`) : Promise.resolve(),
             isError ? redisSafeHIncrBy("stats:errors:endpoints", endpoint, 1) : Promise.resolve(),
+            isError ? redisSafeHIncrBy(endpointHourKey, "errors", 1) : Promise.resolve(),
         ]);
 
         redisSafeExpire(`stats:hourly:${hour}`, 60 * 60 * 48);
+        redisSafeExpire(endpointHourKey, 60 * 60 * 2);
+
+        if (isError) await checkErrorAlert(endpoint, endpointHourKey);
     } catch {
         // stats tidak boleh sampai bikin request utama gagal
+    }
+}
+
+const ALERT_MIN_ERRORS = 3;
+const ALERT_MIN_RATE = 0.5;
+const ALERT_COOLDOWN_SECONDS = 30 * 60;
+
+async function checkErrorAlert(endpoint, endpointHourKey) {
+    try {
+        const stat = await redisSafeHGetAll(endpointHourKey);
+        const total = Number(stat.total) || 0;
+        const errors = Number(stat.errors) || 0;
+        if (errors < ALERT_MIN_ERRORS) return;
+        if (errors / total < ALERT_MIN_RATE) return;
+
+        const cooldownKey = `alert:cooldown:${endpoint}`;
+        const onCooldown = await redisSafeGet(cooldownKey, null);
+        if (onCooldown) return;
+
+        await redisSafeSet(cooldownKey, "1");
+        redisSafeExpire(cooldownKey, ALERT_COOLDOWN_SECONDS);
+
+        const rate = ((errors / total) * 100).toFixed(0);
+        sendWebhook(null, [
+            {
+                title: "🚨 Endpoint Bermasalah",
+                color: 0xed4245,
+                fields: [
+                    { name: "Endpoint", value: `\`${endpoint}\`` },
+                    { name: "Error Rate (1 jam terakhir)", value: `${errors}/${total} (${rate}%)`, inline: true },
+                    { name: "Waktu", value: new Date().toISOString(), inline: true },
+                ],
+                footer: { text: "Kyzen.id Alert System — nggak akan alert lagi buat endpoint ini selama 30 menit" },
+                timestamp: new Date(),
+            },
+        ]);
+    } catch {
+        // alert gagal kirim juga jangan sampai ganggu request utama
     }
 }
 
