@@ -30,7 +30,7 @@ module.exports = function (app) {
     try {
       const video = await searchVideo(query);
       const yt = await getClient();
-      const info = await yt.getBasicInfo(video.videoId);
+      const info = await yt.getBasicInfo(video.videoId, "ANDROID");
 
       const format = info.chooseFormat({ type: "audio", quality: "best" });
       if (!format) {
