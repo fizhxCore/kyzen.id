@@ -1514,6 +1514,123 @@
           }
         }
       }
+    },
+    "/search/spotify": {
+      "get": {
+        "summary": "Search Spotify",
+        "description": "Cari lagu di Spotify berdasarkan kata kunci (via token akses anonim web player, tanpa API key resmi)",
+        "tags": [
+          "Downloader"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Kata kunci pencarian lagu",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Jumlah hasil (maks 10)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean"
+                    },
+                    "result": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parameter q tidak disertakan"
+          },
+          "502": {
+            "description": "Gagal mengambil token/data dari Spotify"
+          }
+        }
+      }
+    },
+    "/spotify/lyrics": {
+      "get": {
+        "summary": "Spotify Lyrics",
+        "description": "Cari lirik lagu (plain & synced) berdasarkan judul dan artis via lrclib.net",
+        "tags": [
+          "Downloader"
+        ],
+        "parameters": [
+          {
+            "name": "title",
+            "in": "query",
+            "description": "Judul lagu",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "artist",
+            "in": "query",
+            "description": "Nama artis (opsional, mempersempit hasil)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean"
+                    },
+                    "result": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parameter title tidak disertakan"
+          },
+          "404": {
+            "description": "Lirik tidak ditemukan"
+          },
+          "502": {
+            "description": "Gagal mengambil data dari lrclib.net"
+          }
+        }
+      }
     }
   }
 }
