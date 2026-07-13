@@ -56,7 +56,7 @@ module.exports = function (app) {
       const filename = safeName(`${meta.artist} - ${meta.title}`.trim() || video.title) + ".m4a";
 
       const yt = await getClient();
-      const info = await yt.getBasicInfo(video.videoId);
+      const info = await yt.getBasicInfo(video.videoId, "ANDROID");
       const format = info.chooseFormat({ type: "audio", quality: "best" });
 
       if (!format) {
