@@ -1,4 +1,5 @@
 const express = require("express");
+const helmet = require("helmet");
 const chalk = require("chalk");
 const fs = require("fs");
 const cors = require("cors");
@@ -288,6 +289,7 @@ async function sendLog({ ip, method, endpoint, status, query, duration }) {
 
 // ========== EXPRESS ==========
 app.enable("trust proxy");
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
@@ -296,7 +298,7 @@ app.set("json spaces", 2);
 // ========== MAINTENANCE MODE CHECK ==========
 app.use(async (req, res, next) => {
     // Rute /dev/* tetap bisa diakses walau maintenance nyala
-    if (req.path.startsWith("/dev/")) return next();
+    if (req.path.startsWith("/dev/") || req.path === "/health") return next();
 
     const isOn = await isMaintenanceOn();
     if (!isOn) return next();
@@ -323,6 +325,16 @@ try {
 } catch {
     console.warn(chalk.yellow("⚠️ openapi.json not found or invalid."));
 }
+
+// ========== /health route ==========
+app.get("/health", (req, res) => {
+    res.json({
+        status: true,
+        uptime_seconds: Math.floor(process.uptime()),
+        timestamp: new Date().toISOString(),
+        redis: redisEnabled,
+    });
+});
 
 // ========== /openapi.json route ==========
 app.get("/openapi.json", (req, res) => {
@@ -419,14 +431,13 @@ if (fs.existsSync(apiFolder)) {
 
                     totalRoutes++;
                     console.log(chalk.bgYellow.black(`Loaded Route: ${file}`));
-                    sendNotification(`✅ Loaded Route: ${file}`);
                 }
             });
         }
     });
 }
 
-sendNotification(`🟢 Server started. Total Routes Loaded: ${totalRoutes}`);
+console.log(chalk.bgGreen.black(`Server started. Total Routes Loaded: ${totalRoutes}`));
 
 // ========== MAIN ROUTES ==========
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "api-page", "index.html")));
