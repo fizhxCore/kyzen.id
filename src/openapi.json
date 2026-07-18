@@ -1631,6 +1631,151 @@
           }
         }
       }
+    },
+    "/image/wq": {
+      "get": {
+        "summary": "Quotes Windows Meme",
+        "description": "Membuat gambar meme quotes bergaya jendela error Windows",
+        "tags": [
+          "Image"
+        ],
+        "parameters": [
+          {
+            "name": "text",
+            "in": "query",
+            "description": "Teks quotes yang ingin ditampilkan",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil, gambar png dikirim langsung",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parameter text tidak disertakan"
+          }
+        }
+      }
+    },
+    "/image/fakenotifwa": {
+      "get": {
+        "summary": "Fake Notifikasi WhatsApp",
+        "description": "Membuat gambar palsu notifikasi WhatsApp di lockscreen",
+        "tags": [
+          "Image"
+        ],
+        "parameters": [
+          {
+            "name": "ppUrl",
+            "in": "query",
+            "description": "URL foto profil pengirim",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          {
+            "name": "username",
+            "in": "query",
+            "description": "Nama pengirim",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "chat",
+            "in": "query",
+            "description": "Isi pesan yang ditampilkan",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tanggal",
+            "in": "query",
+            "description": "Teks tanggal (default: tanggal hari ini)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "jam",
+            "in": "query",
+            "description": "Teks jam (default: jam sekarang)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil, gambar png dikirim langsung",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parameter wajib tidak lengkap"
+          }
+        }
+      }
+    },
+    "/image/jarvismeme": {
+      "get": {
+        "summary": "Jarvis Meme",
+        "description": "Membuat gambar meme template Jarvis dengan teks custom",
+        "tags": [
+          "Image"
+        ],
+        "parameters": [
+          {
+            "name": "text",
+            "in": "query",
+            "description": "Teks yang ingin ditampilkan",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil, gambar png dikirim langsung",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parameter text tidak disertakan"
+          }
+        }
+      }
     }
   }
 }
