@@ -500,7 +500,7 @@
     const label = document.getElementById('new-key-label').value.trim();
     const result = await api('/dev/api/keys', { method: 'POST', body: JSON.stringify({ label }) });
     if (result.status === false) {
-      alert('Gagal generate key: ' + (result.error || 'unknown error'));
+      alert('Gagal generate key: ' + (result.error || 'unknown error') + (result.detail ? '\n\nDetail: ' + result.detail : ''));
       return;
     }
     document.getElementById('new-key-label').value = '';
