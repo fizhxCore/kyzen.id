@@ -208,6 +208,79 @@
     background: rgba(255, 92, 108, 0.08); border: 1px solid var(--red); border-radius: 2px;
     padding: 12px 16px; margin-bottom: 16px; font-size: 12px; color: var(--red);
   }
+
+  /* ── Navbar ── */
+  .navbar {
+    display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+
+  .nav-tab {
+    background: none; border: none; color: var(--cream-dim); font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px; font-weight: 500; letter-spacing: 0.02em; padding: 10px 18px; cursor: pointer;
+    border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s;
+  }
+
+  .nav-tab:hover { color: var(--cream); }
+  .nav-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+  .tab-page { display: none; }
+  .tab-page.active { display: block; }
+
+  /* ── API Keys ── */
+  .key-form {
+    display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap;
+  }
+
+  .key-form input {
+    flex: 1; min-width: 160px; background: var(--hole); border: 1px solid var(--border); border-radius: 2px;
+    color: var(--cream); font-family: 'IBM Plex Mono', monospace; font-size: 13px; padding: 10px 12px; outline: none;
+  }
+
+  .key-form input:focus { border-color: var(--teal); }
+
+  .btn-teal {
+    background: var(--teal); color: var(--hole); border: none; border-radius: 2px; font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; padding: 10px 18px; cursor: pointer;
+  }
+
+  .btn-teal:hover { filter: brightness(1.1); }
+
+  .key-row {
+    padding: 14px 0; border-bottom: 1px dashed var(--border);
+  }
+
+  .key-row:last-child { border-bottom: none; }
+
+  .key-row-top {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 6px;
+  }
+
+  .key-label { font-weight: 600; font-size: 14px; color: var(--cream); }
+
+  .key-value {
+    font-size: 12px; color: var(--teal); background: var(--hole); padding: 6px 10px; border-radius: 2px;
+    display: inline-block; word-break: break-all; margin: 4px 0;
+  }
+
+  .key-meta { font-size: 11px; color: var(--cream-dim); display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+
+  .btn-revoke {
+    background: transparent; border: 1px solid var(--red); color: var(--red); border-radius: 2px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 6px 12px; cursor: pointer;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+
+  .btn-revoke:hover { background: rgba(255, 92, 108, 0.1); }
+
+  .protected-list {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
+  }
+
+  .protected-tag {
+    font-size: 11px; background: var(--hole); color: var(--cream-dim); padding: 4px 10px; border-radius: 2px;
+    border: 1px solid var(--border);
+  }
 </style>
 </head>
 <body>
@@ -229,57 +302,89 @@
       Redis belum terhubung. Stats & maintenance mode nggak akan tersimpan. Cek env var UPSTASH_REDIS_REST_URL & UPSTASH_REDIS_REST_TOKEN di Vercel.
     </div>
 
-    <div class="panel">
-      <div class="hazard-strip"></div>
-      <div class="breaker-row">
-        <div class="breaker-label">
-          <div class="tag">Breaker 01</div>
-          <h2>Maintenance Mode</h2>
-          <p id="maintenance-desc">Semua endpoint aktif normal.</p>
-        </div>
-        <div class="switch" id="maintenance-switch" onclick="toggleMaintenance()">
-          <div class="knob"></div>
-        </div>
-      </div>
-    </div>
+    <nav class="navbar">
+      <button class="nav-tab active" data-tab="overview" onclick="switchTab('overview')">Overview</button>
+      <button class="nav-tab" data-tab="apikeys" onclick="switchTab('apikeys')">API Keys</button>
+    </nav>
 
-    <div class="panel">
-      <h3 class="section-title">Ringkasan</h3>
-      <div class="stat-grid">
-        <div class="stat-tag">
-          <div class="num" id="stat-today">0</div>
-          <div class="lbl">Request Hari Ini</div>
-        </div>
-        <div class="stat-tag">
-          <div class="num" id="stat-alltime">0</div>
-          <div class="lbl">Request Sepanjang Waktu</div>
-        </div>
-        <div class="stat-tag warn">
-          <div class="num" id="stat-errors-today">0</div>
-          <div class="lbl">Error Hari Ini</div>
-        </div>
-        <div class="stat-tag danger">
-          <div class="num" id="stat-errorrate">0%</div>
-          <div class="lbl">Error Rate (All-time)</div>
-        </div>
-      </div>
-    </div>
+    <div class="tab-page active" id="tab-overview">
 
-    <div class="panel">
-      <h3 class="section-title">Request — 24 Jam Terakhir</h3>
-      <div class="chart" id="chart"></div>
-      <div class="chart-labels" id="chart-labels"></div>
-    </div>
-
-    <div class="two-col">
       <div class="panel">
-        <h3 class="section-title">Endpoint Tersibuk</h3>
-        <div id="top-endpoints"></div>
+        <div class="hazard-strip"></div>
+        <div class="breaker-row">
+          <div class="breaker-label">
+            <div class="tag">Breaker 01</div>
+            <h2>Maintenance Mode</h2>
+            <p id="maintenance-desc">Semua endpoint aktif normal.</p>
+          </div>
+          <div class="switch" id="maintenance-switch" onclick="toggleMaintenance()">
+            <div class="knob"></div>
+          </div>
+        </div>
       </div>
+
       <div class="panel">
-        <h3 class="section-title">Endpoint Paling Sering Error</h3>
-        <div id="top-errors"></div>
+        <h3 class="section-title">Ringkasan</h3>
+        <div class="stat-grid">
+          <div class="stat-tag">
+            <div class="num" id="stat-today">0</div>
+            <div class="lbl">Request Hari Ini</div>
+          </div>
+          <div class="stat-tag">
+            <div class="num" id="stat-alltime">0</div>
+            <div class="lbl">Request Sepanjang Waktu</div>
+          </div>
+          <div class="stat-tag warn">
+            <div class="num" id="stat-errors-today">0</div>
+            <div class="lbl">Error Hari Ini</div>
+          </div>
+          <div class="stat-tag danger">
+            <div class="num" id="stat-errorrate">0%</div>
+            <div class="lbl">Error Rate (All-time)</div>
+          </div>
+        </div>
       </div>
+
+      <div class="panel">
+        <h3 class="section-title">Request — 24 Jam Terakhir</h3>
+        <div class="chart" id="chart"></div>
+        <div class="chart-labels" id="chart-labels"></div>
+      </div>
+
+      <div class="two-col">
+        <div class="panel">
+          <h3 class="section-title">Endpoint Tersibuk</h3>
+          <div id="top-endpoints"></div>
+        </div>
+        <div class="panel">
+          <h3 class="section-title">Endpoint Paling Sering Error</h3>
+          <div id="top-errors"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="tab-page" id="tab-apikeys">
+
+      <div class="panel">
+        <h3 class="section-title">Endpoint Yang Butuh API Key</h3>
+        <p style="font-size:12px;color:var(--cream-dim);margin:0 0 8px;">Request ke endpoint ini wajib nyertain API key valid (header <code>x-api-key</code> atau query <code>?apikey=</code>), kalau nggak bakal ditolak (401).</p>
+        <div class="protected-list" id="protected-list"></div>
+      </div>
+
+      <div class="panel">
+        <h3 class="section-title">Generate Key Baru</h3>
+        <div class="key-form">
+          <input type="text" id="new-key-label" placeholder="Label (misal: bot pribadi, teman X, dll)" />
+          <button class="btn-teal" onclick="createKey()">Generate</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="section-title">Daftar API Key</h3>
+        <div id="key-list"><div class="empty">Memuat...</div></div>
+      </div>
+
     </div>
 
   </div>
@@ -335,6 +440,81 @@
       alert('Gagal ubah maintenance mode: ' + (result.error || 'unknown error') + (result.detail ? '\n\nDetail: ' + result.detail : ''));
       updateSwitch(!next);
     }
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll('.nav-tab').forEach(el => el.classList.toggle('active', el.dataset.tab === tab));
+    document.querySelectorAll('.tab-page').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    if (tab === 'apikeys') loadApiKeys();
+  }
+
+  function timeAgo(iso) {
+    if (!iso) return 'belum pernah';
+    const diff = Date.now() - new Date(iso).getTime();
+    const min = Math.floor(diff / 60000);
+    if (min < 1) return 'barusan';
+    if (min < 60) return `${min} menit lalu`;
+    const hr = Math.floor(min / 60);
+    if (hr < 24) return `${hr} jam lalu`;
+    return `${Math.floor(hr / 24)} hari lalu`;
+  }
+
+  function renderApiKeys(data) {
+    const protectedList = document.getElementById('protected-list');
+    const tags = [...data.protected_routes.prefixes.map(p => p + '*'), ...data.protected_routes.exact];
+    protectedList.innerHTML = tags.map(t => `<span class="protected-tag">${t}</span>`).join('');
+
+    const container = document.getElementById('key-list');
+    if (!data.result.length) {
+      container.innerHTML = '<div class="empty">Belum ada API key. Generate satu di atas.</div>';
+      return;
+    }
+
+    container.innerHTML = data.result.map(k => `
+      <div class="key-row">
+        <div class="key-row-top">
+          <span class="key-label">${k.label}</span>
+          <button class="btn-revoke" onclick="revokeKey('${k.key}')">Revoke</button>
+        </div>
+        <div class="key-value">${k.key}</div>
+        <div class="key-meta">
+          <span>Dipakai ${k.usage || 0}x</span>
+          <span>Terakhir: ${timeAgo(k.last_used)}</span>
+          <span>Dibuat: ${new Date(k.created_at).toLocaleDateString('id-ID')}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function loadApiKeys() {
+    const data = await api('/dev/api/keys');
+    if (data.status === false) {
+      document.getElementById('key-list').innerHTML = '<div class="empty">❌ ' + (data.error || 'Gagal memuat') + '</div>';
+      return;
+    }
+    renderApiKeys(data);
+  }
+
+  async function createKey() {
+    const label = document.getElementById('new-key-label').value.trim();
+    const result = await api('/dev/api/keys', { method: 'POST', body: JSON.stringify({ label }) });
+    if (result.status === false) {
+      alert('Gagal generate key: ' + (result.error || 'unknown error'));
+      return;
+    }
+    document.getElementById('new-key-label').value = '';
+    loadApiKeys();
+  }
+
+  async function revokeKey(key) {
+    if (!confirm('Yakin mau revoke key ini? Nggak bisa dibatalin.')) return;
+    const result = await api('/dev/api/keys/' + encodeURIComponent(key), { method: 'DELETE' });
+    if (result.status === false) {
+      alert('Gagal revoke key: ' + (result.error || 'unknown error'));
+      return;
+    }
+    loadApiKeys();
   }
 
   async function load() {
