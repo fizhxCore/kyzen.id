@@ -1,5 +1,6 @@
 const express = require("express");
 const helmet = require("helmet");
+const crypto = require("crypto");
 const chalk = require("chalk");
 const fs = require("fs");
 const cors = require("cors");
@@ -85,6 +86,46 @@ async function redisSafeExpire(key, seconds) {
         return true;
     } catch {
         return false;
+    }
+}
+
+async function redisSafeDel(key) {
+    if (!redisEnabled) return false;
+    try {
+        await redisClient.del(key);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+async function redisSafeSAdd(key, member) {
+    if (!redisEnabled) return false;
+    try {
+        await redisClient.sadd(key, member);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+async function redisSafeSRem(key, member) {
+    if (!redisEnabled) return false;
+    try {
+        await redisClient.srem(key, member);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+async function redisSafeSMembers(key) {
+    if (!redisEnabled) return [];
+    try {
+        const members = await redisClient.smembers(key);
+        return members || [];
+    } catch {
+        return [];
     }
 }
 
@@ -232,6 +273,64 @@ function isDevAuthorized(req) {
     return key === DEV_SECRET;
 }
 
+// ========== API KEY SYSTEM ==========
+const API_KEYS_SET = "apikeys:all";
+
+// Endpoint yang wajib pakai API key (yang berat/numpang layanan pihak ketiga sensitif)
+const PROTECTED_PREFIXES = ["/ai/"];
+const PROTECTED_EXACT = ["/download/all"];
+
+function isProtectedRoute(reqPath) {
+    if (PROTECTED_EXACT.includes(reqPath)) return true;
+    return PROTECTED_PREFIXES.some((p) => reqPath.startsWith(p));
+}
+
+function generateApiKey() {
+    return "kyz_" + crypto.randomBytes(24).toString("hex");
+}
+
+async function createApiKey(label) {
+    const key = generateApiKey();
+    const data = { label: label || "unnamed", created_at: new Date().toISOString(), usage: 0, last_used: null };
+    await redisSafeSet(`apikey:${key}`, JSON.stringify(data));
+    await redisSafeSAdd(API_KEYS_SET, key);
+    return key;
+}
+
+async function listApiKeys() {
+    const keys = await redisSafeSMembers(API_KEYS_SET);
+    const result = [];
+    for (const key of keys) {
+        const raw = await redisSafeGet(`apikey:${key}`, null);
+        if (!raw) continue;
+        try {
+            const data = JSON.parse(raw);
+            result.push({ key, ...data });
+        } catch {}
+    }
+    return result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+}
+
+async function revokeApiKey(key) {
+    await redisSafeDel(`apikey:${key}`);
+    await redisSafeSRem(API_KEYS_SET, key);
+}
+
+async function validateApiKey(key) {
+    if (!key) return false;
+    const raw = await redisSafeGet(`apikey:${key}`, null);
+    if (!raw) return false;
+
+    try {
+        const data = JSON.parse(raw);
+        data.usage = (data.usage || 0) + 1;
+        data.last_used = new Date().toISOString();
+        redisSafeSet(`apikey:${key}`, JSON.stringify(data));
+    } catch {}
+
+    return true;
+}
+
 // ========== DISCORD WEBHOOK ==========
 const WEBHOOK_URL = process.env.WEBHOOK_URL || ""
 const fetch = (...args) => import("node-fetch").then(({ default: f }) => f(...args));
@@ -310,6 +409,23 @@ app.use(async (req, res, next) => {
     }
 
     return res.status(503).sendFile(path.join(__dirname, "api-page", "maintenance.html"));
+});
+
+// ========== API KEY CHECK ==========
+app.use(async (req, res, next) => {
+    if (!isProtectedRoute(req.path)) return next();
+
+    const key = req.headers["x-api-key"] || req.query.apikey;
+    const valid = await validateApiKey(key);
+
+    if (!valid) {
+        return res.status(401).json({
+            status: false,
+            error: "Endpoint ini butuh API key yang valid. Kirim lewat header 'x-api-key' atau query '?apikey='",
+        });
+    }
+
+    next();
 });
 
 // ========== STATIC FILES ==========
@@ -474,6 +590,40 @@ app.post("/dev/api/maintenance", async (req, res) => {
             return res.status(500).json({ status: false, error: "Gagal menyimpan status ke Redis", detail: lastRedisError });
         }
         res.json({ status: true, maintenance: !!enabled });
+    } catch (error) {
+        res.status(500).json({ status: false, error: error.message });
+    }
+});
+
+app.get("/dev/api/keys", async (req, res) => {
+    if (!isDevAuthorized(req)) return res.status(401).json({ status: false, error: "Unauthorized" });
+    try {
+        const keys = await listApiKeys();
+        res.json({ status: true, protected_routes: { prefixes: PROTECTED_PREFIXES, exact: PROTECTED_EXACT }, result: keys });
+    } catch (error) {
+        res.status(500).json({ status: false, error: error.message });
+    }
+});
+
+app.post("/dev/api/keys", async (req, res) => {
+    if (!isDevAuthorized(req)) return res.status(401).json({ status: false, error: "Unauthorized" });
+    if (!redisEnabled) {
+        return res.status(503).json({ status: false, error: "Redis belum terhubung. Cek env var UPSTASH_REDIS_REST_URL & UPSTASH_REDIS_REST_TOKEN." });
+    }
+    try {
+        const { label } = req.body;
+        const key = await createApiKey(label);
+        res.json({ status: true, key });
+    } catch (error) {
+        res.status(500).json({ status: false, error: error.message });
+    }
+});
+
+app.delete("/dev/api/keys/:key", async (req, res) => {
+    if (!isDevAuthorized(req)) return res.status(401).json({ status: false, error: "Unauthorized" });
+    try {
+        await revokeApiKey(req.params.key);
+        res.json({ status: true });
     } catch (error) {
         res.status(500).json({ status: false, error: error.message });
     }
