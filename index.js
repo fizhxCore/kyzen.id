@@ -652,8 +652,6 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log(chalk.bgGreen.black(`Server running on port ${PORT}`));
 });
-    }
-}
 
 async function redisSafeSAdd(key, member) {
     if (!redisEnabled) return false;
