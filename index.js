@@ -542,6 +542,7 @@ app.use(async (req, res, next) => {
 
 // ========== LOAD API ROUTES ==========
 let totalRoutes = 0;
+let failedRoutes = 0;
 const apiFolder = path.join(__dirname, "./src/api");
 
 if (fs.existsSync(apiFolder)) {
@@ -550,15 +551,25 @@ if (fs.existsSync(apiFolder)) {
         if (fs.statSync(subPath).isDirectory()) {
             fs.readdirSync(subPath).forEach((file) => {
                 if (file.endsWith(".js")) {
-                    const route = require(path.join(subPath, file));
-                    if (typeof route === "function") route(app);
+                    try {
+                        const route = require(path.join(subPath, file));
+                        if (typeof route === "function") route(app);
 
-                    totalRoutes++;
-                    console.log(chalk.bgYellow.black(`Loaded Route: ${file}`));
+                        totalRoutes++;
+                        console.log(chalk.bgYellow.black(`Loaded Route: ${file}`));
+                    } catch (err) {
+                        failedRoutes++;
+                        console.error(chalk.bgRed.white(`[ROUTE ERROR] ${sub}/${file}`));
+                        console.error(chalk.red(`Reason: ${err.message}`));
+                    }
                 }
             });
         }
     });
+}
+
+if (failedRoutes > 0) {
+    sendNotification(`⚠️ ${failedRoutes} route gagal di-load saat startup. Cek Vercel Function Logs buat detail.`);
 }
 
 console.log(chalk.bgGreen.black(`Server started. Total Routes Loaded: ${totalRoutes}`));
