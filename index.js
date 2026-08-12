@@ -23,6 +23,41 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.set("json spaces", 2);
 
+// ========== ROUTE ISOLATION ==========
+// Bungkus semua handler route (app.get/post/put/delete) biar kalau 1 endpoint
+// error/reject pas dijalanin, cuma request itu yang gagal — server tetap hidup,
+// endpoint lain tetap bisa dipakai. Ini nggak ngubah response sukses endpoint manapun,
+// cuma nambah pengaman buat kasus error yang sebelumnya nggak ke-tangkep.
+["get", "post", "put", "delete", "patch"].forEach((method) => {
+    const original = app[method].bind(app);
+    app[method] = function (routePath, ...handlers) {
+        const wrapped = handlers.map((handler) => {
+            if (typeof handler !== "function") return handler;
+            return function (req, res, next) {
+                try {
+                    const result = handler(req, res, next);
+                    if (result && typeof result.catch === "function") {
+                        result.catch((err) => {
+                            console.error(chalk.bgRed.white(`[HANDLER ERROR] ${req.method} ${req.originalUrl}`));
+                            console.error(chalk.red(`Reason: ${err.message}`));
+                            if (!res.headersSent) {
+                                res.status(500).json({ status: false, error: "Terjadi kesalahan internal saat memproses request" });
+                            }
+                        });
+                    }
+                } catch (err) {
+                    console.error(chalk.bgRed.white(`[HANDLER ERROR] ${req.method} ${req.originalUrl}`));
+                    console.error(chalk.red(`Reason: ${err.message}`));
+                    if (!res.headersSent) {
+                        res.status(500).json({ status: false, error: "Terjadi kesalahan internal saat memproses request" });
+                    }
+                }
+            };
+        });
+        return original(routePath, ...wrapped);
+    };
+});
+
 // ========== MAINTENANCE MODE CHECK ==========
 app.use(maintenanceMw.maintenanceCheckMiddleware);
 
