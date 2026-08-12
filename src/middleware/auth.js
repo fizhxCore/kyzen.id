@@ -29,7 +29,7 @@ async function createApiKey(label) {
     const key = generateApiKey();
     const data = { label: label || "unnamed", created_at: new Date().toISOString(), usage: 0, last_used: null };
 
-    const savedData = await redis.redisSafeSet(`apikey:${key}`, JSON.stringify(data));
+    const savedData = await redis.redisSafeSet(`apikey:${key}`, data);
     const savedIndex = await redis.redisSafeSAdd(API_KEYS_SET, key);
 
     if (!savedData || !savedIndex) {
@@ -43,12 +43,9 @@ async function listApiKeys() {
     const keys = await redis.redisSafeSMembers(API_KEYS_SET);
     const result = [];
     for (const key of keys) {
-        const raw = await redis.redisSafeGet(`apikey:${key}`, null);
-        if (!raw) continue;
-        try {
-            const data = JSON.parse(raw);
-            result.push({ key, ...data });
-        } catch {}
+        const data = await redis.redisSafeGet(`apikey:${key}`, null);
+        if (!data || typeof data !== "object") continue;
+        result.push({ key, ...data });
     }
     return result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 }
@@ -60,15 +57,12 @@ async function revokeApiKey(key) {
 
 async function validateApiKey(key) {
     if (!key) return false;
-    const raw = await redis.redisSafeGet(`apikey:${key}`, null);
-    if (!raw) return false;
+    const data = await redis.redisSafeGet(`apikey:${key}`, null);
+    if (!data || typeof data !== "object") return false;
 
-    try {
-        const data = JSON.parse(raw);
-        data.usage = (data.usage || 0) + 1;
-        data.last_used = new Date().toISOString();
-        redis.redisSafeSet(`apikey:${key}`, JSON.stringify(data));
-    } catch {}
+    data.usage = (data.usage || 0) + 1;
+    data.last_used = new Date().toISOString();
+    redis.redisSafeSet(`apikey:${key}`, data);
 
     return true;
 }
