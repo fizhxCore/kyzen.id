@@ -1,244 +1,65 @@
-# Theresa Api UI
+# Kyzen API
 
-A modern, clean, and user-friendly interface for browsing and testing Falcon API endpoints.
+REST API canvas image generation — Express.js, deploy ke Vercel sebagai satu serverless function.
 
-![Theresa API UI Screenshot](image.png)
+## Struktur
 
-## Features
-
-- 🔍 **Smart Search**: Quickly find endpoints by name or description
-- 📱 **Responsive Design**: Works perfectly on desktop, tablet, and mobile devices
-- 🔄 **API Status Indicators**: Visual indicators showing the status of each endpoint (ready, error, update)
-- 📋 **Copy to Clipboard**: One-click copying of API endpoints and responses
-- 📊 **JSON Highlighting**: Beautifully formatted JSON responses with syntax highlighting
-- 📝 **Detailed Parameter Forms**: Clearly labeled input fields with tooltips for parameter descriptions
-
-## Getting Started
-
-### Prerequisites
-
-- Web server (Apache, Nginx, etc.)
-- Modern web browser
-
-### Installation
-
-1. Clone this repository to your web server:
-   ```bash
-   git clone https://github.com/Z7-zhen/theresa.git
-   ```
-
-2. Configure your API endpoints in `openapi.json` (see Configuration section below)
-
-3. Access the UI through your web server (e.g., `https://your-domain.com/theresa-api-ui/`)
-
-## Configuration
-
-All API endpoints and categories are configured in the `openapi.json` file. The structure is as follows:
-
-```json
-{
-  "openapi": "1.0.0",
-  "info": {
-    "title": "Theresa",
-    "author": "Z7:林企业",
-    "version": "v1.0.0",
-    "description": "Simple and easy to use API."
-  },
-  "servers": [
-    {
-      "url": "/"
-    }
-  ],
-  "tags": [
-    {
-      "name": "Image"
-    },
-    {
-      "name": "Search Tools"
-    }
-  ],
-  "paths": {
-    "/image/ba": {
-      "get": {
-        "summary": "Blue Archive",
-        "description": "Blue Archive Random Images",
-        "tags": ["Image"],
-        "responses": {
-          "200": {
-            "description": "Respon berhasil",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "images": {
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "format": "uri"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Gagal memproses request"
-          }
-        }
-      }
-    },
-
-    "/search/youtube": {
-      "get": {
-        "summary": "YouTube Search",
-        "description": "Video search",
-        "tags": ["Search Tools"],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "required": true,
-            "description": "Search query",
-            "schema": {
-              "type": "string",
-              "minLength": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Hasil pencarian YouTube",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "results": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Query tidak valid"
-          },
-          "500": {
-            "description": "Gagal memproses request"
-          }
-        }
-      }
-    }
-  }
-}
+```
+index.js                 # entry point — load semua route, middleware, admin API
+src/
+  api/
+    canvas/               # semua endpoint canvas image generation
+  middleware/
+    auth.js                # dev key (admin) + API key untuk endpoint terproteksi
+    maintenance.js          # maintenance mode toggle
+  utils/
+    redis.js                # wrapper Upstash Redis (aman kalau belum di-setup)
+    stats.js                 # tracking traffic & error per endpoint
+    errorlog.js               # log error terakhir (buat admin panel)
+    routeRegistry.js           # status load route saat boot
+    logger.js                   # console log + notifikasi Discord webhook (opsional)
+  openapi.json              # sumber data endpoint — dipakai homepage & dashboard admin
+api-page/
+  index.html                # homepage + dokumentasi (dinamis, baca dari /openapi.json)
+  dashboard.html             # panel admin
+  dashboard-login.html        # gerbang login admin
+  404.html / 500.html / maintenance.html
 ```
 
-### Adding a New Endpoint
+## Menjalankan lokal
 
-To add a new endpoint:
-
-1. Find the appropriate category in the `categories` array or create a new one
-2. Add a new object to the `items` array with the following properties:
-   - `name`: Display name of the endpoint
-   - `desc`: Brief description of what the endpoint does
-   - `path`: The API path, including any query parameters
-   - `status`: Status of the endpoint (`"ready"`, `"error"`, or `"update"`)
-   - `params`: Object containing parameter names as keys and descriptions as values
-
-Example:
-```json
-{
-  "name": "User Info",
-  "description": "Get user information by ID",
-  "endpoint": {
-    "path": "/api/user",
-    "method": "GET"
-  },
-  "status": "ready",
-  "params": [
-    {
-      "name": "id",
-      "type": "string",
-      "required": true,
-      "description": "User ID number",
-      "example": "123456789"
-    }
-  ],
-  "examples": {
-    "request_url": "/api/user?id=123456789",
-    "response": {
-      "status": true,
-      "user": {
-        "id": "123456789",
-        "name": "Theresa User",
-        "premium": true
-      }
-    }
-  }
-}
+```bash
+npm install
+DEV_SECRET=rahasia npm start
 ```
 
-## Customization
+Buka `http://localhost:4000` untuk dokumentasi, `http://localhost:4000/dev/dashboard?key=rahasia` untuk admin panel.
 
-### Theme Colors
+## Environment variables
 
-You can customize the colors by modifying the CSS variables in the `styles.css` file:
+| Variable | Wajib? | Keterangan |
+|---|---|---|
+| `DEV_SECRET` | ya (buat akses admin) | Key buat masuk `/dev/dashboard` dan semua `/dev/api/*` |
+| `UPSTASH_REDIS_REST_URL` | opsional | Kalau kosong, traffic stats & error log fallback ke memory (hilang tiap restart) |
+| `UPSTASH_REDIS_REST_TOKEN` | opsional | Pasangan dari URL di atas |
+| `DISCORD_WEBHOOK_URL` | opsional | Notifikasi request/error ke Discord |
 
-```css
-:root {
-  --primary-color: #4361ee;
-  --secondary-color: #3a86ff;
-  --accent-color: #4cc9f0;
-  /* Additional color variables... */
-}
-```
+## Menambah endpoint baru
 
-### Banner Image
+1. Buat file baru di `src/api/<kategori>/nama-endpoint.js`, export function `(app) => { app.get("/kategori/nama-endpoint", handler) }`
+2. Tambahkan entry-nya ke `src/openapi.json` (tag kategori, parameter, deskripsi) — ini yang bikin endpoint otomatis muncul di homepage & dashboard admin
+3. Kalau endpoint butuh proteksi API key, tambahkan prefix/path-nya ke `PROTECTED_PREFIXES` / `PROTECTED_EXACT` di `src/middleware/auth.js`
 
-Change the banner image by updating the `bannerImage` property in `openapi.json`:
+## Admin panel
 
-```json
-{
-  "bannerImage": "/path/to/your/banner .jpg"
-}
-```
+Akses: `/dev/dashboard?key=DEV_SECRET`
 
-## Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+- **Overview** — traffic hari ini/all-time, grafik 24 jam, endpoint tersibuk
+- **Endpoints** — semua endpoint dikelompokkan per kategori, dengan indikator kesehatan: 🟢 aman, 🟡 rawan error, 🔴 error (dihitung dari rasio error per endpoint)
+- **Error Log** — 50 error terakhir lengkap dengan pesan asli, method, path, dan sumbernya
+- **API Keys** — generate/revoke API key untuk endpoint terproteksi
+- **System** — versi Node, uptime, memory, status Redis, dan status load route saat boot
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgements
-
-- [Font Awesome](https://fontawesome.com/) for icons
-- [Bootstrap](https://getbootstrap.com/) for layout components
-- [Inter Font](https://fonts.google.com/specimen/Inter) for typography
-
----
-
-Created with ❤️ by FlowFalcon
-Recode by Z7:林企业 (https://github.com/Reyz2902)
+MIT

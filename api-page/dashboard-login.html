@@ -1,51 +1,82 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kyzen.id — Dev Access</title>
-<link rel="preconnect" href="https://fonts.googleapis.com/">
-<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/theme.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KYZEN — Admin Access</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; }
-  html, body { height: 100%; margin: 0; }
-  body { display: flex; align-items: center; justify-content: center; padding: 24px; position: relative; overflow: hidden; }
-  .panel { max-width: 380px; width: 100%; padding: 36px 30px; }
-  h1 {
-    font-family: var(--k-font-display); font-size: 20px; margin: 14px 0 6px; color: var(--k-white);
-    text-transform: none; letter-spacing: -0.01em;
+  :root{
+    --bg:#0a0a0a; --card:#111111; --border:#262626; --border-hover:#3a3a3a;
+    --text:#fafafa; --text-secondary:#a1a1aa; --text-tertiary:#6b6b70;
+    --radius-lg:18px; --radius-sm:8px; --ease:cubic-bezier(.4,0,.2,1);
   }
-  p { color: var(--k-dim); font-size: 13px; margin: 0 0 22px; }
-  input {
-    width: 100%; background: var(--k-bg); border: 1px solid var(--k-border); border-radius: 2px;
-    color: var(--k-white); font-family: var(--k-font-mono); font-size: 14px;
-    padding: 12px 14px; margin-bottom: 14px; outline: none;
+  *{box-sizing:border-box;}
+  html,body{height:100%;margin:0;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:'Inter', sans-serif;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
   }
-  input:focus { border-color: var(--k-teal); }
-  button { width: 100%; }
-  .err { color: var(--k-danger); font-size: 12px; margin-top: 14px; display: none; }
+  .panel{
+    width:100%; max-width:360px;
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius-lg);
+    padding:32px 28px;
+  }
+  .mark{
+    width:36px;height:36px;border-radius:10px;
+    background:var(--text);color:var(--bg);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:16px;margin-bottom:18px;
+  }
+  h1{font-size:18px;font-weight:700;letter-spacing:-0.02em;margin:0 0 6px;}
+  p{color:var(--text-secondary);font-size:13px;margin:0 0 22px;line-height:1.6;}
+  input{
+    width:100%;
+    background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm);
+    color:var(--text); font-family:'JetBrains Mono', monospace; font-size:13.5px;
+    padding:12px 14px; margin-bottom:12px; outline:none;
+    transition:border-color 200ms var(--ease);
+  }
+  input:focus{border-color:var(--border-hover);}
+  input::placeholder{color:var(--text-tertiary);}
+  button{
+    width:100%; font-family:'Inter', sans-serif; font-weight:600; font-size:13.5px;
+    background:var(--text); color:#0a0a0a; border:none; border-radius:var(--radius-sm);
+    padding:11px 0; cursor:pointer;
+    transition:background 200ms var(--ease), transform 200ms var(--ease);
+  }
+  button:hover{background:#e4e4e7;}
+  button:active{transform:scale(0.98);}
+  .err{
+    display:none; color:#fca5a5; font-size:12.5px; margin-top:14px;
+    background:rgba(252,165,165,0.08); border:1px solid #4a1e1e; border-radius:var(--radius-sm);
+    padding:10px 12px;
+  }
 </style>
 </head>
-<body class="k-theme">
-  <div class="k-diamond-field"></div>
-  <div class="panel k-card">
-    <div class="k-badge">Access Locked</div>
-    <h1>Dev Access</h1>
-    <p>Masukkan dev key buat akses dashboard.</p>
-    <input type="password" id="key" placeholder="dev key..." autofocus />
-    <button class="k-btn" onclick="go()">Masuk</button>
-    <div class="err" id="err">Key salah, coba lagi.</div>
+<body>
+  <div class="panel">
+    <div class="mark">K</div>
+    <h1>Admin access</h1>
+    <p>Masukkan dev key buat masuk ke panel admin KYZEN API.</p>
+    <input type="password" id="key" placeholder="dev key" autofocus autocomplete="off">
+    <button onclick="go()">Masuk</button>
+    <div class="err" id="err">Key salah atau belum diisi. Coba lagi.</div>
   </div>
   <script>
-    function go() {
+    function go(){
       const key = document.getElementById('key').value.trim();
-      if (!key) return;
+      if(!key) return;
       window.location.href = '/dev/dashboard?key=' + encodeURIComponent(key);
     }
-    document.getElementById('key').addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
-    if (new URLSearchParams(window.location.search).get('key')) {
+    document.getElementById('key').addEventListener('keydown', function(e){
+      if(e.key === 'Enter') go();
+    });
+    if(new URLSearchParams(window.location.search).get('key')){
       document.getElementById('err').style.display = 'block';
     }
   </script>

@@ -127,7 +127,16 @@ async function getDashboardStats() {
     };
 }
 
+async function getAllEndpointCounts() {
+    const [totals, errors] = await Promise.all([
+        redis.redisSafeHGetAll("stats:endpoints:all_time"),
+        redis.redisSafeHGetAll("stats:errors:endpoints"),
+    ]);
+    return { totals, errors };
+}
+
 module.exports = {
     recordRequestStat,
     getDashboardStats,
+    getAllEndpointCounts,
 };

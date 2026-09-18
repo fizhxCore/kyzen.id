@@ -128,6 +128,38 @@ async function redisSafeSMembers(key) {
     }
 }
 
+async function redisSafeLPush(key, value) {
+    if (!redisEnabled) return false;
+    try {
+        await redisClient.lpush(key, value);
+        return true;
+    } catch (err) {
+        console.error(chalk.red(`[Redis LPUSH Error] ${err.message}`));
+        lastRedisError = err.message;
+        return false;
+    }
+}
+
+async function redisSafeLTrim(key, start, stop) {
+    if (!redisEnabled) return false;
+    try {
+        await redisClient.ltrim(key, start, stop);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+async function redisSafeLRange(key, start, stop) {
+    if (!redisEnabled) return [];
+    try {
+        const val = await redisClient.lrange(key, start, stop);
+        return val || [];
+    } catch {
+        return [];
+    }
+}
+
 module.exports = {
     isRedisEnabled,
     getLastRedisError,
@@ -141,4 +173,7 @@ module.exports = {
     redisSafeSAdd,
     redisSafeSRem,
     redisSafeSMembers,
+    redisSafeLPush,
+    redisSafeLTrim,
+    redisSafeLRange,
 };

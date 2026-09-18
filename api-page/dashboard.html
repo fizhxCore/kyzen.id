@@ -1,390 +1,318 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kyzen.id — Control Panel</title>
-<link rel="preconnect" href="https://fonts.googleapis.com/">
-<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/theme.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KYZEN — Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0A0A0B;
-    --bg-panel: #141416;
-    --bg-panel-2: #1C1C1F;
-    --hole: #000000;
-    --orange: #4DFFDF;
-    --yellow: #FFD166;
-    --teal: #4DFFDF;
-    --red: #FF5C6C;
-    --cream: #F5F5F7;
-    --cream-dim: #8A8A93;
-    --border: #2A2A2E;
+  :root{
+    --bg:#0a0a0a; --bg-elevated:#0d0d0d; --card:#111111; --card-hover:#151515;
+    --border:#262626; --border-hover:#3a3a3a;
+    --text:#fafafa; --text-secondary:#a1a1aa; --text-tertiary:#6b6b70;
+    --radius-lg:18px; --radius-md:14px; --radius-sm:8px; --ease:cubic-bezier(.4,0,.2,1);
+    --green:#4ade80; --red:#fca5a5; --yellow:#fde68a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:'Inter', sans-serif; font-size:14px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  code,.mono{font-family:'JetBrains Mono', monospace;}
+  ::-webkit-scrollbar{height:8px;width:8px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important;}}
+
+  .wrap{max-width:920px;margin:0 auto;padding:28px 20px 60px;}
+
+  header{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    margin-bottom:26px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand .mark{
+    width:30px;height:30px;border-radius:8px;background:var(--text);color:var(--bg);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;
+  }
+  .brand h1{font-size:16px;font-weight:700;letter-spacing:-0.02em;margin:0;}
+  .brand .sub{font-size:11.5px;color:var(--text-tertiary);}
+  .live{
+    display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);
+    border:1px solid var(--border);border-radius:100px;padding:5px 12px;background:var(--card);
+  }
+  .live .dot{width:6px;height:6px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 0 0 rgba(74,222,128,0.5);animation:pulse 2s ease-out infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(74,222,128,.45);}70%{box-shadow:0 0 0 6px rgba(74,222,128,0);}100%{box-shadow:0 0 0 0 rgba(74,222,128,0);}}
+
+  nav.tabs{
+    display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:24px;
+    overflow-x:auto;
+  }
+  nav.tabs button{
+    background:none;border:none;color:var(--text-tertiary);font-family:'Inter',sans-serif;
+    font-size:13px;font-weight:600;padding:10px 14px;cursor:pointer;white-space:nowrap;
+    border-bottom:2px solid transparent;transition:color 200ms var(--ease), border-color 200ms var(--ease);
+  }
+  nav.tabs button:hover{color:var(--text);}
+  nav.tabs button.active{color:var(--text);border-bottom-color:var(--text);}
+
+  .tab-page{display:none;}
+  .tab-page.active{display:block;}
+
+  .card{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);
+    transition:border-color 200ms var(--ease);
+  }
+  .card:hover{border-color:var(--border-hover);}
+  .card + .card{margin-top:16px;}
+  .card-pad{padding:20px;}
+
+  .grid-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;}
+  @media(min-width:640px){.grid-cards{grid-template-columns:repeat(4,1fr);}}
+  .stat{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius-md);
+    padding:16px;
+  }
+  .stat .num{font-size:24px;font-weight:800;letter-spacing:-0.02em;}
+  .stat .lbl{font-size:11.5px;color:var(--text-tertiary);margin-top:4px;}
+  .stat.warn .num{color:var(--yellow);}
+  .stat.danger .num{color:var(--red);}
+
+  .section-label{
+    font-size:11px;color:var(--text-tertiary);font-weight:600;letter-spacing:0.04em;
+    text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;
   }
 
-  * { box-sizing: border-box; }
+  /* chart */
+  .chart{display:flex;align-items:flex-end;gap:3px;height:90px;}
+  .bar{flex:1;background:var(--border-hover);border-radius:2px 2px 0 0;min-height:2px;transition:background 200ms var(--ease);}
+  .bar:hover{background:var(--text);}
+  .chart-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-tertiary);margin-top:8px;}
 
-  body {
-    margin: 0;
-    min-height: 100vh;
-    background: var(--bg);
-    color: var(--cream);
-    font-family: 'IBM Plex Mono', monospace;
-    padding: 20px;
-    position: relative;
-    overflow-x: hidden;
+  /* rows */
+  .row-list .row{
+    display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;
+  }
+  .row-list .row:last-child{border-bottom:none;}
+  .row-list .row .name{flex:1;color:var(--text);font-family:'JetBrains Mono', monospace;font-size:12px;word-break:break-all;}
+  .row-list .row .bar-bg{flex:1.4;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;display:none;}
+  @media(min-width:600px){.row-list .row .bar-bg{display:block;}}
+  .row-list .row .bar-fill{height:100%;background:var(--text-secondary);border-radius:3px;}
+  .row-list .row .bar-fill.danger{background:var(--red);}
+  .row-list .row .count{color:var(--text-tertiary);font-size:12px;min-width:40px;text-align:right;flex-shrink:0;}
+  .empty{color:var(--text-tertiary);font-size:12.5px;padding:6px 0;}
+
+  .health-dot{
+    width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:5px;
+  }
+  .health-dot.green{background:var(--green);}
+  .health-dot.yellow{background:var(--yellow);}
+  .health-dot.red{background:var(--red);}
+  .method-tag{
+    font-family:'JetBrains Mono', monospace;font-size:10.5px;color:var(--text-tertiary);
+    border:1px solid var(--border);border-radius:5px;padding:1px 6px;flex-shrink:0;
   }
 
-  body::before, body::after {
-    content: '';
-    position: fixed;
-    border: 1px solid rgba(255,255,255,0.06);
-    transform: rotate(45deg);
-    pointer-events: none;
-    z-index: 0;
+  /* toggle */
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .toggle-row h3{font-size:14px;font-weight:600;margin:0 0 4px;}
+  .toggle-row p{font-size:12.5px;color:var(--text-secondary);margin:0;}
+  .switch{
+    width:44px;height:26px;border-radius:100px;background:var(--bg);border:1px solid var(--border);
+    position:relative;cursor:pointer;flex-shrink:0;transition:border-color 200ms var(--ease);
   }
-
-  body::before { width: 300px; height: 300px; top: -80px; right: -80px; }
-  body::after { width: 200px; height: 200px; bottom: 5%; left: -70px; }
-
-  .wrap { max-width: 960px; margin: 0 auto; position: relative; z-index: 1; }
-
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 12px;
+  .switch .knob{
+    position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;
+    background:var(--text-tertiary);transition:transform 200ms var(--ease), background 200ms var(--ease);
   }
+  .switch.on{border-color:var(--red);}
+  .switch.on .knob{transform:translateX(18px);background:var(--red);}
 
-  .brand h1 {
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 22px;
-    margin: 0;
-    letter-spacing: -0.02em;
+  /* kv */
+  .kv-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  .kv-row:last-child{border-bottom:none;}
+  .kv-row .k{color:var(--text-secondary);font-size:12.5px;}
+  .kv-row .v{font-size:13px;color:var(--text);}
+
+  /* error log */
+  .err-item{padding:13px 0;border-bottom:1px solid var(--border);}
+  .err-item:last-child{border-bottom:none;}
+  .err-item .top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px;}
+  .err-item .status-code{
+    font-family:'JetBrains Mono', monospace;font-size:11px;font-weight:600;color:var(--red);
+    border:1px solid #4a1e1e;border-radius:6px;padding:2px 7px;flex-shrink:0;
   }
+  .err-item .method{font-family:'JetBrains Mono', monospace;font-size:11px;color:var(--text-secondary);}
+  .err-item .path{font-family:'JetBrains Mono', monospace;font-size:12.5px;color:var(--text);word-break:break-all;}
+  .err-item .time{margin-left:auto;font-size:11px;color:var(--text-tertiary);}
+  .err-item .msg{font-size:12.5px;color:var(--text-secondary);line-height:1.5;}
+  .err-item .source-tag{font-size:10px;color:var(--text-tertiary);}
 
-  .brand span {
-    color: var(--cream-dim);
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+  /* keys */
+  .key-form{display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap;}
+  .key-form input{
+    flex:1;min-width:180px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);
+    color:var(--text);font-family:'Inter',sans-serif;font-size:13px;padding:10px 12px;outline:none;
+    transition:border-color 200ms var(--ease);
   }
-
-  .live-dot {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    color: var(--cream-dim);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+  .key-form input:focus{border-color:var(--border-hover);}
+  .btn{
+    font-family:'Inter',sans-serif;font-weight:600;font-size:13px;border-radius:var(--radius-sm);
+    padding:10px 16px;cursor:pointer;border:1px solid transparent;transition:transform 200ms var(--ease), background 200ms var(--ease);
+    flex-shrink:0;
   }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--text);color:#0a0a0a;}
+  .btn-primary:hover{background:#e4e4e7;}
+  .btn-ghost{background:transparent;color:var(--text-secondary);border-color:var(--border);}
+  .btn-ghost:hover{border-color:var(--border-hover);color:var(--text);}
+  .btn-danger{background:transparent;color:var(--red);border-color:#4a1e1e;font-size:11.5px;padding:6px 10px;}
+  .btn-danger:hover{background:rgba(252,165,165,0.08);}
 
-  .live-dot i {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--teal);
-    box-shadow: 0 0 8px var(--teal);
-    animation: pulse 2s ease-in-out infinite;
+  .tag{
+    display:inline-block;font-size:11px;font-family:'JetBrains Mono', monospace;
+    color:var(--text-secondary);border:1px solid var(--border);border-radius:6px;
+    padding:3px 8px;margin:0 6px 6px 0;
   }
+  .key-item{padding:13px 0;border-bottom:1px solid var(--border);}
+  .key-item:last-child{border-bottom:none;}
+  .key-item .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px;}
+  .key-item .label{font-weight:600;font-size:13px;}
+  .key-item .value{font-family:'JetBrains Mono', monospace;font-size:11.5px;color:var(--text-secondary);word-break:break-all;margin-bottom:6px;}
+  .key-item .meta{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--text-tertiary);}
 
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
-
-  .panel {
-    background: var(--bg-panel);
-    border: 2px solid var(--border);
-    border-radius: 2px;
-    padding: 20px;
-    margin-bottom: 16px;
-    position: relative;
-  }
-
-  .hazard-strip {
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 2px;
-    border-radius: 2px 2px 0 0;
-    background: linear-gradient(90deg, var(--teal), transparent 70%);
-  }
-
-  /* ── Breaker switch (maintenance toggle) ── */
-  .breaker-row {
-    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-  }
-
-  .breaker-label .tag {
-    display: inline-block; background: var(--hole); color: var(--yellow);
-    font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
-    padding: 3px 8px; border-radius: 3px; margin-bottom: 6px;
-  }
-
-  .breaker-label h2 { font-size: 15px; margin: 0; font-weight: 600; }
-  .breaker-label p { font-size: 12px; color: var(--cream-dim); margin: 4px 0 0; }
-
-  .switch {
-    width: 64px; height: 34px; border-radius: 17px; background: var(--hole);
-    border: 2px solid var(--border); position: relative; cursor: pointer;
-    transition: border-color 0.2s;
-  }
-
-  .switch .knob {
-    position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%;
-    background: var(--teal); transition: transform 0.25s ease, background 0.25s ease;
-    box-shadow: 0 0 10px rgba(0,0,0,0.4);
-  }
-
-  .switch.on .knob { transform: translateX(30px); background: var(--red); box-shadow: 0 0 12px var(--red); }
-  .switch.on { border-color: var(--red); }
-
-  /* ── Stat label-tags ── */
-  .stat-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;
-  }
-
-  .stat-tag {
-    background: var(--hole); border-radius: 4px; padding: 14px 16px; border-left: 3px solid var(--orange);
-  }
-
-  .stat-tag .num {
-    font-family: 'Archivo Black', sans-serif; font-size: 26px; color: var(--cream); line-height: 1;
-  }
-
-  .stat-tag .lbl {
-    font-size: 10px; color: var(--cream-dim); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 6px;
-  }
-
-  .stat-tag.warn { border-left-color: var(--yellow); }
-  .stat-tag.danger { border-left-color: var(--red); }
-
-  h3.section-title {
-    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-dim);
-    margin: 0 0 14px; display: flex; align-items: center; gap: 8px;
-  }
-
-  /* ── Hourly chart ── */
-  .chart {
-    display: flex; align-items: flex-end; gap: 3px; height: 100px; padding-top: 8px;
-  }
-
-  .bar {
-    flex: 1; background: var(--teal); border-radius: 2px 2px 0 0; min-height: 2px;
-    position: relative; transition: background 0.2s;
-  }
-
-  .bar:hover { background: var(--orange); }
-
-  .chart-labels {
-    display: flex; justify-content: space-between; font-size: 9px; color: var(--cream-dim); margin-top: 6px;
-  }
-
-  /* ── Endpoint rows ── */
-  .ep-row {
-    display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px dashed var(--border);
-    font-size: 13px;
-  }
-
-  .ep-row:last-child { border-bottom: none; }
-
-  .ep-name { flex: 1; color: var(--cream); font-weight: 500; }
-  .ep-count { color: var(--cream-dim); font-size: 12px; min-width: 60px; text-align: right; }
-
-  .ep-bar-bg { flex: 2; height: 6px; background: var(--hole); border-radius: 3px; overflow: hidden; }
-  .ep-bar-fill { height: 100%; background: var(--teal); border-radius: 3px; }
-  .ep-bar-fill.danger { background: var(--red); }
-
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-  @media (max-width: 700px) {
-    .two-col { grid-template-columns: 1fr; }
-  }
-
-  .empty { color: var(--cream-dim); font-size: 12px; padding: 8px 0; }
-
-  .loading { text-align: center; padding: 60px 0; color: var(--cream-dim); font-size: 13px; }
-
-  .redis-warning {
-    display: none;
-    background: rgba(255, 92, 108, 0.08); border: 1px solid var(--red); border-radius: 2px;
-    padding: 12px 16px; margin-bottom: 16px; font-size: 12px; color: var(--red);
-  }
-
-  /* ── Navbar ── */
-  .navbar {
-    display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border);
-    overflow-x: auto;
-  }
-
-  .nav-tab {
-    background: none; border: none; color: var(--cream-dim); font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px; font-weight: 500; letter-spacing: 0.02em; padding: 10px 18px; cursor: pointer;
-    border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s;
-  }
-
-  .nav-tab:hover { color: var(--cream); }
-  .nav-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
-
-  .tab-page { display: none; }
-  .tab-page.active { display: block; }
-
-  /* ── API Keys ── */
-  .key-form {
-    display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap;
-  }
-
-  .key-form input {
-    flex: 1; min-width: 160px; background: var(--hole); border: 1px solid var(--border); border-radius: 2px;
-    color: var(--cream); font-family: 'IBM Plex Mono', monospace; font-size: 13px; padding: 10px 12px; outline: none;
-  }
-
-  .key-form input:focus { border-color: var(--teal); }
-
-  .btn-teal {
-    background: var(--teal); color: var(--hole); border: none; border-radius: 2px; font-family: 'IBM Plex Mono', monospace;
-    font-weight: 700; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; padding: 10px 18px; cursor: pointer;
-  }
-
-  .btn-teal:hover { filter: brightness(1.1); }
-
-  .key-row {
-    padding: 14px 0; border-bottom: 1px dashed var(--border);
-  }
-
-  .key-row:last-child { border-bottom: none; }
-
-  .key-row-top {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 6px;
-  }
-
-  .key-label { font-weight: 600; font-size: 14px; color: var(--cream); }
-
-  .key-value {
-    font-size: 12px; color: var(--teal); background: var(--hole); padding: 6px 10px; border-radius: 2px;
-    display: inline-block; word-break: break-all; margin: 4px 0;
-  }
-
-  .key-meta { font-size: 11px; color: var(--cream-dim); display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
-
-  .btn-revoke {
-    background: transparent; border: 1px solid var(--red); color: var(--red); border-radius: 2px;
-    font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 6px 12px; cursor: pointer;
-    text-transform: uppercase; letter-spacing: 0.04em;
-  }
-
-  .btn-revoke:hover { background: rgba(255, 92, 108, 0.1); }
-
-  .protected-list {
-    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
-  }
-
-  .protected-tag {
-    font-size: 11px; background: var(--hole); color: var(--cream-dim); padding: 4px 10px; border-radius: 2px;
-    border: 1px solid var(--border);
+  .loading{text-align:center;padding:50px 0;color:var(--text-tertiary);font-size:13px;}
+  .banner{
+    display:none;background:rgba(252,165,165,0.08);border:1px solid #4a1e1e;border-radius:var(--radius-sm);
+    padding:11px 14px;margin-bottom:16px;font-size:12.5px;color:var(--red);
   }
 </style>
 </head>
 <body>
-<div class="k-circle-arc" style="width:460px;height:460px;top:-240px;left:20%;"></div>
 <div class="wrap">
+
   <header>
     <div class="brand">
-      <h1>KYZEN.ID <span style="color:var(--teal)">/</span> CONTROL</h1>
-      <span>internal — dev only</span>
+      <span class="mark">K</span>
+      <div>
+        <h1>KYZEN Admin</h1>
+        <div class="sub">Control panel</div>
+      </div>
     </div>
-    <div class="live-dot k-corner-box" style="position:relative;padding:6px 10px;"><span class="k-corner tl"></span><span class="k-corner br"></span><i></i> live</div>
+    <div class="live"><span class="dot"></span> Live</div>
   </header>
 
-  <div id="loading" class="loading">memuat data panel...</div>
+  <div class="banner" id="redis-banner">Redis belum terhubung — data traffic/key tidak akan tersimpan permanen. Cek env var <code>UPSTASH_REDIS_REST_URL</code> &amp; <code>UPSTASH_REDIS_REST_TOKEN</code>.</div>
+
+  <div id="loading" class="loading">Memuat panel admin...</div>
 
   <div id="content" style="display:none;">
 
-    <div class="redis-warning" id="redis-warning">
-      Redis belum terhubung. Stats & maintenance mode nggak akan tersimpan. Cek env var UPSTASH_REDIS_REST_URL & UPSTASH_REDIS_REST_TOKEN di Vercel.
-    </div>
-
-    <nav class="navbar">
-      <button class="nav-tab active" data-tab="overview" onclick="switchTab('overview')">Overview</button>
-      <button class="nav-tab" data-tab="apikeys" onclick="switchTab('apikeys')">API Keys</button>
+    <nav class="tabs">
+      <button class="active" data-tab="overview" onclick="switchTab('overview')">Overview</button>
+      <button data-tab="endpoints" onclick="switchTab('endpoints')">Endpoints</button>
+      <button data-tab="errors" onclick="switchTab('errors')">Error Log</button>
+      <button data-tab="keys" onclick="switchTab('keys')">API Keys</button>
+      <button data-tab="system" onclick="switchTab('system')">System</button>
     </nav>
 
+    <!-- ===================== OVERVIEW ===================== -->
     <div class="tab-page active" id="tab-overview">
-
-      <div class="panel">
-        <div class="hazard-strip"></div>
-        <div class="breaker-row">
-          <div class="breaker-label">
-            <div class="tag">Breaker 01</div>
-            <h2>Maintenance Mode</h2>
-            <p id="maintenance-desc">Semua endpoint aktif normal.</p>
-          </div>
-          <div class="switch" id="maintenance-switch" onclick="toggleMaintenance()">
-            <div class="knob"></div>
-          </div>
-        </div>
+      <div class="grid-cards">
+        <div class="stat"><div class="num" id="stat-today">0</div><div class="lbl">Request hari ini</div></div>
+        <div class="stat"><div class="num" id="stat-alltime">0</div><div class="lbl">Request sepanjang waktu</div></div>
+        <div class="stat warn"><div class="num" id="stat-errors-today">0</div><div class="lbl">Error hari ini</div></div>
+        <div class="stat danger"><div class="num" id="stat-errorrate">0%</div><div class="lbl">Error rate (all-time)</div></div>
       </div>
 
-      <div class="panel">
-        <h3 class="section-title">Ringkasan</h3>
-        <div class="stat-grid">
-          <div class="stat-tag">
-            <div class="num" id="stat-today">0</div>
-            <div class="lbl">Request Hari Ini</div>
-          </div>
-          <div class="stat-tag">
-            <div class="num" id="stat-alltime">0</div>
-            <div class="lbl">Request Sepanjang Waktu</div>
-          </div>
-          <div class="stat-tag warn">
-            <div class="num" id="stat-errors-today">0</div>
-            <div class="lbl">Error Hari Ini</div>
-          </div>
-          <div class="stat-tag danger">
-            <div class="num" id="stat-errorrate">0%</div>
-            <div class="lbl">Error Rate (All-time)</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <h3 class="section-title">Request — 24 Jam Terakhir</h3>
+      <div class="card card-pad">
+        <div class="section-label">Request — 24 jam terakhir</div>
         <div class="chart" id="chart"></div>
         <div class="chart-labels" id="chart-labels"></div>
       </div>
 
-      <div class="two-col">
-        <div class="panel">
-          <h3 class="section-title">Endpoint Tersibuk</h3>
-          <div id="top-endpoints"></div>
-        </div>
-        <div class="panel">
-          <h3 class="section-title">Endpoint Paling Sering Error</h3>
-          <div id="top-errors"></div>
-        </div>
+      <div class="card card-pad">
+        <div class="section-label">Endpoint tersibuk</div>
+        <div class="row-list" id="top-endpoints"></div>
       </div>
 
+      <div class="card card-pad">
+        <div class="section-label">Endpoint paling sering error</div>
+        <div class="row-list" id="top-errors"></div>
+      </div>
     </div>
 
-    <div class="tab-page" id="tab-apikeys">
+    <!-- ===================== ENDPOINTS ===================== -->
+    <div class="tab-page" id="tab-endpoints">
+      <div id="endpoints-by-category"></div>
+    </div>
 
-      <div class="panel">
-        <h3 class="section-title">Endpoint Yang Butuh API Key</h3>
-        <p style="font-size:12px;color:var(--cream-dim);margin:0 0 8px;">Request ke endpoint ini wajib nyertain API key valid (header <code>x-api-key</code> atau query <code>?apikey=</code>), kalau nggak bakal ditolak (401).</p>
-        <div class="protected-list" id="protected-list"></div>
+    <!-- ===================== ERROR LOG ===================== -->
+    <div class="tab-page" id="tab-errors">
+      <div class="card card-pad">
+        <div class="section-label">
+          50 error terakhir
+          <button class="btn btn-ghost" style="padding:5px 10px;font-size:11.5px;" onclick="loadErrors()">Refresh</button>
+        </div>
+        <div id="error-list"><div class="empty">Memuat...</div></div>
+      </div>
+    </div>
+
+    <!-- ===================== API KEYS ===================== -->
+    <div class="tab-page" id="tab-keys">
+      <div class="card card-pad">
+        <div class="section-label">Endpoint yang butuh API key</div>
+        <p style="font-size:12.5px;color:var(--text-secondary);margin:0 0 10px;">Request ke endpoint ini wajib nyertain API key valid (header <code>x-api-key</code> atau query <code>?apikey=</code>), kalau nggak bakal ditolak (401).</p>
+        <div id="protected-list"></div>
       </div>
 
-      <div class="panel">
-        <h3 class="section-title">Generate Key Baru</h3>
+      <div class="card card-pad">
+        <div class="section-label">Generate key baru</div>
         <div class="key-form">
-          <input type="text" id="new-key-label" placeholder="Label (misal: bot pribadi, teman X, dll)" />
-          <button class="btn-teal" onclick="createKey()">Generate</button>
+          <input type="text" id="new-key-label" placeholder="Label (misal: bot pribadi, teman X, dll)">
+          <button class="btn btn-primary" onclick="createKey()">Generate</button>
         </div>
       </div>
 
-      <div class="panel">
-        <h3 class="section-title">Daftar API Key</h3>
+      <div class="card card-pad">
+        <div class="section-label">Daftar API key</div>
         <div id="key-list"><div class="empty">Memuat...</div></div>
       </div>
+    </div>
 
+    <!-- ===================== SYSTEM ===================== -->
+    <div class="tab-page" id="tab-system">
+      <div class="card card-pad">
+        <div class="toggle-row">
+          <div>
+            <h3>Maintenance mode</h3>
+            <p id="maintenance-desc">Semua endpoint aktif normal.</p>
+          </div>
+          <div class="switch" id="maintenance-switch" onclick="toggleMaintenance()"><div class="knob"></div></div>
+        </div>
+      </div>
+
+      <div class="card card-pad">
+        <div class="section-label">Runtime</div>
+        <div class="kv-row"><span class="k">Node.js</span><span class="v mono" id="sys-node">-</span></div>
+        <div class="kv-row"><span class="k">Platform</span><span class="v mono" id="sys-platform">-</span></div>
+        <div class="kv-row"><span class="k">Environment</span><span class="v mono" id="sys-env">-</span></div>
+        <div class="kv-row"><span class="k">Uptime</span><span class="v mono" id="sys-uptime">-</span></div>
+        <div class="kv-row"><span class="k">Memory (RSS)</span><span class="v mono" id="sys-mem">-</span></div>
+        <div class="kv-row"><span class="k">Redis</span><span class="v mono" id="sys-redis">-</span></div>
+      </div>
+
+      <div class="card card-pad">
+        <div class="section-label">Route load status</div>
+        <div class="kv-row"><span class="k">Berhasil dimuat</span><span class="v mono" id="sys-routes-loaded">-</span></div>
+        <div class="kv-row"><span class="k">Gagal dimuat</span><span class="v mono" id="sys-routes-failed">-</span></div>
+        <div id="failed-routes-list" style="margin-top:10px;"></div>
+      </div>
     </div>
 
   </div>
@@ -394,37 +322,63 @@
   const params = new URLSearchParams(window.location.search);
   const key = params.get('key') || '';
 
-  async function api(path, opts = {}) {
-    const res = await fetch(path + (path.includes('?') ? '&' : '?') + 'key=' + encodeURIComponent(key), {
+  async function api(path, opts = {}){
+    const sep = path.includes('?') ? '&' : '?';
+    const res = await fetch(path + sep + 'key=' + encodeURIComponent(key), {
       ...opts,
       headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) }
     });
     return res.json();
   }
 
-  function renderEpRows(container, list, danger) {
-    if (!list.length) { container.innerHTML = '<div class="empty">Belum ada data.</div>'; return; }
+  function switchTab(tab){
+    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    if(tab === 'endpoints') loadEndpoints();
+    if(tab === 'keys') loadApiKeys();
+    if(tab === 'errors') loadErrors();
+    if(tab === 'system') loadSystem();
+  }
+
+  function renderRows(container, list, danger){
+    if(!list.length){ container.innerHTML = '<div class="empty">Belum ada data.</div>'; return; }
     const max = Math.max(...list.map(x => x.count));
     container.innerHTML = list.map(item => `
-      <div class="ep-row">
-        <div class="ep-name">${item.endpoint}</div>
-        <div class="ep-bar-bg"><div class="ep-bar-fill${danger ? ' danger' : ''}" style="width:${(item.count / max * 100).toFixed(0)}%"></div></div>
-        <div class="ep-count">${item.count}</div>
+      <div class="row">
+        <div class="name">${escapeHtml(item.endpoint)}</div>
+        <div class="bar-bg"><div class="bar-fill${danger ? ' danger' : ''}" style="width:${(item.count / max * 100).toFixed(0)}%"></div></div>
+        <div class="count">${item.count}</div>
       </div>
     `).join('');
   }
 
-  function renderChart(hourly) {
+  function renderChart(hourly){
     const max = Math.max(...hourly.map(h => h.count), 1);
-    const chart = document.getElementById('chart');
+    document.getElementById('chart').innerHTML = hourly.map(h =>
+      `<div class="bar" style="height:${Math.max((h.count / max * 100), 2)}%" title="${h.hour} — ${h.count} req"></div>`
+    ).join('');
     const labels = document.getElementById('chart-labels');
-    chart.innerHTML = hourly.map(h => `<div class="bar" style="height:${Math.max((h.count / max * 100), 2)}%" title="${h.hour} — ${h.count} req"></div>`).join('');
     labels.innerHTML = `<span>${hourly[0]?.hour || ''}</span><span>${hourly[Math.floor(hourly.length/2)]?.hour || ''}</span><span>${hourly[hourly.length-1]?.hour || ''}</span>`;
   }
 
-  let currentMaintenance = false;
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+  }
 
-  function updateSwitch(on) {
+  function timeAgo(iso){
+    if(!iso) return 'belum pernah';
+    const diff = Date.now() - new Date(iso).getTime();
+    const min = Math.floor(diff / 60000);
+    if(min < 1) return 'barusan';
+    if(min < 60) return `${min} menit lalu`;
+    const hr = Math.floor(min / 60);
+    if(hr < 24) return `${hr} jam lalu`;
+    return `${Math.floor(hr / 24)} hari lalu`;
+  }
+
+  let currentMaintenance = false;
+  function updateSwitch(on){
     currentMaintenance = on;
     const sw = document.getElementById('maintenance-switch');
     const desc = document.getElementById('maintenance-desc');
@@ -432,53 +386,121 @@
     desc.textContent = on ? 'Semua endpoint sedang nonaktif (maintenance).' : 'Semua endpoint aktif normal.';
   }
 
-  async function toggleMaintenance() {
+  async function toggleMaintenance(){
     const next = !currentMaintenance;
     updateSwitch(next);
     const result = await api('/dev/api/maintenance', { method: 'POST', body: JSON.stringify({ enabled: next }) });
-    if (result.status === false) {
+    if(result.status === false){
       alert('Gagal ubah maintenance mode: ' + (result.error || 'unknown error') + (result.detail ? '\n\nDetail: ' + result.detail : ''));
       updateSwitch(!next);
     }
   }
 
-  function switchTab(tab) {
-    document.querySelectorAll('.nav-tab').forEach(el => el.classList.toggle('active', el.dataset.tab === tab));
-    document.querySelectorAll('.tab-page').forEach(el => el.classList.remove('active'));
-    document.getElementById('tab-' + tab).classList.add('active');
-    if (tab === 'apikeys') loadApiKeys();
+  // ---------------- overview ----------------
+  async function loadOverview(){
+    const data = await api('/dev/api/stats');
+    if(data.status === false){
+      document.getElementById('loading').innerHTML = '❌ ' + (data.error || 'Gagal memuat data. Cek dev key.');
+      return false;
+    }
+    document.getElementById('stat-today').textContent = data.totalToday.toLocaleString('id-ID');
+    document.getElementById('stat-alltime').textContent = data.totalAllTime.toLocaleString('id-ID');
+    document.getElementById('stat-errors-today').textContent = data.errorsToday.toLocaleString('id-ID');
+    document.getElementById('stat-errorrate').textContent = data.errorRate + '%';
+    renderChart(data.hourly);
+    renderRows(document.getElementById('top-endpoints'), data.topEndpoints, false);
+    renderRows(document.getElementById('top-errors'), data.topErrors, true);
+    updateSwitch(!!data.maintenance);
+    document.getElementById('redis-banner').style.display = data.redisConnected ? 'none' : 'block';
+    return true;
   }
 
-  function timeAgo(iso) {
-    if (!iso) return 'belum pernah';
-    const diff = Date.now() - new Date(iso).getTime();
-    const min = Math.floor(diff / 60000);
-    if (min < 1) return 'barusan';
-    if (min < 60) return `${min} menit lalu`;
-    const hr = Math.floor(min / 60);
-    if (hr < 24) return `${hr} jam lalu`;
-    return `${Math.floor(hr / 24)} hari lalu`;
+  // ---------------- error log ----------------
+  async function loadErrors(){
+    const container = document.getElementById('error-list');
+    const data = await api('/dev/api/errors');
+    if(data.status === false){
+      container.innerHTML = '<div class="empty">❌ ' + escapeHtml(data.error || 'Gagal memuat') + '</div>';
+      return;
+    }
+    if(!data.result.length){
+      container.innerHTML = '<div class="empty">Belum ada error tercatat. 🎉</div>';
+      return;
+    }
+    container.innerHTML = data.result.map(e => `
+      <div class="err-item">
+        <div class="top">
+          <span class="status-code">${e.statusCode}</span>
+          <span class="method">${escapeHtml(e.method)}</span>
+          <span class="path">${escapeHtml(e.endpoint)}</span>
+          <span class="time">${timeAgo(e.timestamp)}</span>
+        </div>
+        <div class="msg">${escapeHtml(e.message)}</div>
+        <div class="source-tag">via ${escapeHtml(e.source)} · IP ${escapeHtml(e.ip)}</div>
+      </div>
+    `).join('');
   }
 
-  function renderApiKeys(data) {
+  // ---------------- endpoints (health) ----------------
+  const HEALTH_LABEL = { green: 'Aman', yellow: 'Rawan error', red: 'Error' };
+
+  async function loadEndpoints(){
+    const container = document.getElementById('endpoints-by-category');
+    const data = await api('/dev/api/endpoints');
+    if(data.status === false){
+      container.innerHTML = '<div class="card card-pad"><div class="empty">❌ ' + escapeHtml(data.error || 'Gagal memuat') + '</div></div>';
+      return;
+    }
+    const grouped = {};
+    data.result.forEach(ep => {
+      if(!grouped[ep.category]) grouped[ep.category] = [];
+      grouped[ep.category].push(ep);
+    });
+
+    container.innerHTML = Object.keys(grouped).sort().map(category => `
+      <div class="card card-pad">
+        <div class="section-label">${escapeHtml(category)} <span style="text-transform:none;font-weight:400;">${grouped[category].length} endpoint</span></div>
+        <div class="row-list">
+          ${grouped[category].map(ep => `
+            <div class="row" style="align-items:flex-start;">
+              <span class="health-dot ${ep.health}" title="${HEALTH_LABEL[ep.health]}"></span>
+              <div style="flex:1;min-width:0;">
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                  <span class="method-tag">${ep.method}</span>
+                  <span class="name" style="flex:none;">${escapeHtml(ep.path)}</span>
+                </div>
+                ${ep.summary ? `<div style="font-size:11.5px;color:var(--text-tertiary);margin-top:2px;">${escapeHtml(ep.summary)}</div>` : ''}
+              </div>
+              <div class="count" style="text-align:right;">
+                <div>${ep.total} req</div>
+                ${ep.total > 0 ? `<div style="color:${ep.health === 'red' ? 'var(--red)' : ep.health === 'yellow' ? 'var(--yellow)' : 'var(--text-tertiary)'};">${ep.errorRate}% error</div>` : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ---------------- api keys ----------------
+  function renderApiKeys(data){
     const protectedList = document.getElementById('protected-list');
     const tags = [...data.protected_routes.prefixes.map(p => p + '*'), ...data.protected_routes.exact];
-    protectedList.innerHTML = tags.map(t => `<span class="protected-tag">${t}</span>`).join('');
+    protectedList.innerHTML = tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
 
     const container = document.getElementById('key-list');
-    if (!data.result.length) {
+    if(!data.result.length){
       container.innerHTML = '<div class="empty">Belum ada API key. Generate satu di atas.</div>';
       return;
     }
-
     container.innerHTML = data.result.map(k => `
-      <div class="key-row">
-        <div class="key-row-top">
-          <span class="key-label">${k.label}</span>
-          <button class="btn-revoke" onclick="revokeKey('${k.key}')">Revoke</button>
+      <div class="key-item">
+        <div class="top">
+          <span class="label">${escapeHtml(k.label)}</span>
+          <button class="btn btn-danger" onclick="revokeKey('${k.key}')">Revoke</button>
         </div>
-        <div class="key-value">${k.key}</div>
-        <div class="key-meta">
+        <div class="value">${escapeHtml(k.key)}</div>
+        <div class="meta">
           <span>Dipakai ${k.usage || 0}x</span>
           <span>Terakhir: ${timeAgo(k.last_used)}</span>
           <span>Dibuat: ${new Date(k.created_at).toLocaleDateString('id-ID')}</span>
@@ -487,19 +509,19 @@
     `).join('');
   }
 
-  async function loadApiKeys() {
+  async function loadApiKeys(){
     const data = await api('/dev/api/keys');
-    if (data.status === false) {
-      document.getElementById('key-list').innerHTML = '<div class="empty">❌ ' + (data.error || 'Gagal memuat') + '</div>';
+    if(data.status === false){
+      document.getElementById('key-list').innerHTML = '<div class="empty">❌ ' + escapeHtml(data.error || 'Gagal memuat') + '</div>';
       return;
     }
     renderApiKeys(data);
   }
 
-  async function createKey() {
+  async function createKey(){
     const label = document.getElementById('new-key-label').value.trim();
     const result = await api('/dev/api/keys', { method: 'POST', body: JSON.stringify({ label }) });
-    if (result.status === false) {
+    if(result.status === false){
       alert('Gagal generate key: ' + (result.error || 'unknown error') + (result.detail ? '\n\nDetail: ' + result.detail : ''));
       return;
     }
@@ -507,42 +529,60 @@
     loadApiKeys();
   }
 
-  async function revokeKey(key) {
-    if (!confirm('Yakin mau revoke key ini? Nggak bisa dibatalin.')) return;
-    const result = await api('/dev/api/keys/' + encodeURIComponent(key), { method: 'DELETE' });
-    if (result.status === false) {
+  async function revokeKey(k){
+    if(!confirm('Yakin mau revoke key ini? Nggak bisa dibatalin.')) return;
+    const result = await api('/dev/api/keys/' + encodeURIComponent(k), { method: 'DELETE' });
+    if(result.status === false){
       alert('Gagal revoke key: ' + (result.error || 'unknown error'));
       return;
     }
     loadApiKeys();
   }
 
-  async function load() {
-    const data = await api('/dev/api/stats');
+  // ---------------- system ----------------
+  async function loadSystem(){
+    const data = await api('/dev/api/system');
+    if(data.status === false) return;
+    document.getElementById('sys-node').textContent = data.node;
+    document.getElementById('sys-platform').textContent = data.platform;
+    document.getElementById('sys-env').textContent = data.env;
+    const up = data.uptime_seconds;
+    const upStr = up < 60 ? `${up}s` : up < 3600 ? `${Math.floor(up/60)}m ${up%60}s` : `${Math.floor(up/3600)}h ${Math.floor((up%3600)/60)}m`;
+    document.getElementById('sys-uptime').textContent = upStr;
+    document.getElementById('sys-mem').textContent = `${data.memory.rss_mb} MB (heap ${data.memory.heap_used_mb}/${data.memory.heap_total_mb} MB)`;
+    document.getElementById('sys-redis').textContent = data.redisConnected ? 'Connected' : 'Not connected';
 
-    if (data.status === false) {
-      document.getElementById('loading').innerHTML = '❌ ' + (data.error || 'Gagal memuat data. Cek dev key.');
-      return;
+    document.getElementById('sys-routes-loaded').textContent = `${data.routes.loaded} / ${data.routes.total}`;
+    document.getElementById('sys-routes-failed').textContent = data.routes.failed;
+
+    const failedContainer = document.getElementById('failed-routes-list');
+    if(data.routes.failed > 0){
+      failedContainer.innerHTML = data.routes.failedList.map(r => `
+        <div class="err-item">
+          <div class="top"><span class="path">${escapeHtml(r.file)}</span></div>
+          <div class="msg">${escapeHtml(r.error)}</div>
+        </div>
+      `).join('');
+    } else {
+      failedContainer.innerHTML = '';
     }
-
-    document.getElementById('stat-today').textContent = data.totalToday.toLocaleString('id-ID');
-    document.getElementById('stat-alltime').textContent = data.totalAllTime.toLocaleString('id-ID');
-    document.getElementById('stat-errors-today').textContent = data.errorsToday.toLocaleString('id-ID');
-    document.getElementById('stat-errorrate').textContent = data.errorRate + '%';
-
-    renderChart(data.hourly);
-    renderEpRows(document.getElementById('top-endpoints'), data.topEndpoints, false);
-    renderEpRows(document.getElementById('top-errors'), data.topErrors, true);
-    updateSwitch(!!data.maintenance);
-
-    document.getElementById('redis-warning').style.display = data.redisConnected ? 'none' : 'block';
-
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('content').style.display = 'block';
   }
 
-  load();
-  setInterval(load, 15000);
+  // ---------------- init ----------------
+  async function init(){
+    const ok = await loadOverview();
+    if(!ok) return;
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').style.display = 'block';
+    loadSystem();
+  }
+
+  init();
+  setInterval(() => {
+    loadOverview();
+    if(document.getElementById('tab-errors').classList.contains('active')) loadErrors();
+    if(document.getElementById('tab-system').classList.contains('active')) loadSystem();
+  }, 15000);
 </script>
 </body>
 </html>

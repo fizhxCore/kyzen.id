@@ -9,6 +9,8 @@ require("dotenv").config();
 const redisUtil = require("./src/utils/redis");
 const statsUtil = require("./src/utils/stats");
 const logger = require("./src/utils/logger");
+const errorlogUtil = require("./src/utils/errorlog");
+const routeRegistry = require("./src/utils/routeRegistry");
 const maintenanceMw = require("./src/middleware/maintenance");
 const authMw = require("./src/middleware/auth");
 
@@ -34,12 +36,21 @@ app.set("json spaces", 2);
         const wrapped = handlers.map((handler) => {
             if (typeof handler !== "function") return handler;
             return function (req, res, next) {
+                const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
                 try {
                     const result = handler(req, res, next);
                     if (result && typeof result.catch === "function") {
                         result.catch((err) => {
                             console.error(chalk.bgRed.white(`[HANDLER ERROR] ${req.method} ${req.originalUrl}`));
                             console.error(chalk.red(`Reason: ${err.message}`));
+                            errorlogUtil.recordError({
+                                method: req.method,
+                                endpoint: req.originalUrl.split("?")[0],
+                                statusCode: 500,
+                                message: err.message,
+                                ip,
+                                source: "handler",
+                            });
                             if (!res.headersSent) {
                                 res.status(500).json({ status: false, error: "Terjadi kesalahan internal saat memproses request" });
                             }
@@ -48,6 +59,14 @@ app.set("json spaces", 2);
                 } catch (err) {
                     console.error(chalk.bgRed.white(`[HANDLER ERROR] ${req.method} ${req.originalUrl}`));
                     console.error(chalk.red(`Reason: ${err.message}`));
+                    errorlogUtil.recordError({
+                        method: req.method,
+                        endpoint: req.originalUrl.split("?")[0],
+                        statusCode: 500,
+                        message: err.message,
+                        ip,
+                        source: "handler",
+                    });
                     if (!res.headersSent) {
                         res.status(500).json({ status: false, error: "Terjadi kesalahan internal saat memproses request" });
                     }
@@ -114,6 +133,17 @@ app.use((req, res, next) => {
                 creator: openApi.info?.author || "Kyzen.id",
                 ...data
             };
+
+            if (data.status === false && res.statusCode >= 400) {
+                errorlogUtil.recordError({
+                    method: req.method,
+                    endpoint: req.originalUrl.split("?")[0],
+                    statusCode: res.statusCode,
+                    message: data.error || data.message || "Unknown error",
+                    ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress,
+                    source: "response",
+                });
+            }
         }
         return original.call(this, data);
     };
@@ -171,6 +201,7 @@ app.use(async (req, res, next) => {
 // ========== LOAD API ROUTES ==========
 let totalRoutes = 0;
 let failedRoutes = 0;
+const failedRoutesList = [];
 const apiFolder = path.join(__dirname, "./src/api");
 
 if (fs.existsSync(apiFolder)) {
@@ -187,6 +218,7 @@ if (fs.existsSync(apiFolder)) {
                         console.log(chalk.bgYellow.black(`Loaded Route: ${file}`));
                     } catch (err) {
                         failedRoutes++;
+                        failedRoutesList.push({ file: `${sub}/${file}`, error: err.message });
                         console.error(chalk.bgRed.white(`[ROUTE ERROR] ${sub}/${file}`));
                         console.error(chalk.red(`Reason: ${err.message}`));
                     }
@@ -196,6 +228,13 @@ if (fs.existsSync(apiFolder)) {
     });
 }
 
+routeRegistry.setRouteLoadResult({
+    total: totalRoutes + failedRoutes,
+    loaded: totalRoutes,
+    failed: failedRoutes,
+    failedList: failedRoutesList,
+});
+
 if (failedRoutes > 0) {
     logger.sendNotification(`⚠️ ${failedRoutes} route gagal di-load saat startup. Cek Vercel Function Logs buat detail.`);
 }
@@ -204,7 +243,7 @@ console.log(chalk.bgGreen.black(`Server started. Total Routes Loaded: ${totalRou
 
 // ========== MAIN ROUTES ==========
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "api-page", "index.html")));
-app.get("/docs", (req, res) => res.sendFile(path.join(__dirname, "api-page", "docs.html")));
+app.get("/docs", (req, res) => res.redirect("/#endpoints"));
 
 // ========== DEV DASHBOARD ==========
 app.get("/dev/dashboard", (req, res) => {
@@ -252,6 +291,77 @@ app.get("/dev/api/keys", async (req, res) => {
     }
 });
 
+app.get("/dev/api/system", async (req, res) => {
+    if (!authMw.isDevAuthorized(req)) return res.status(401).json({ status: false, error: "Unauthorized" });
+    try {
+        const mem = process.memoryUsage();
+        const maintenance = await maintenanceMw.isMaintenanceOn();
+        res.json({
+            status: true,
+            node: process.version,
+            platform: process.platform,
+            env: process.env.NODE_ENV || "development",
+            uptime_seconds: Math.floor(process.uptime()),
+            memory: {
+                rss_mb: +(mem.rss / 1024 / 1024).toFixed(1),
+                heap_used_mb: +(mem.heapUsed / 1024 / 1024).toFixed(1),
+                heap_total_mb: +(mem.heapTotal / 1024 / 1024).toFixed(1),
+            },
+            redisConnected: redisUtil.isRedisEnabled(),
+            maintenance,
+            routes: routeRegistry.getRouteLoadResult(),
+        });
+    } catch (error) {
+        res.status(500).json({ status: false, error: error.message });
+    }
+});
+
+app.get("/dev/api/endpoints", async (req, res) => {
+    if (!authMw.isDevAuthorized(req)) return res.status(401).json({ status: false, error: "Unauthorized" });
+    try {
+        const { totals, errors } = await statsUtil.getAllEndpointCounts();
+        const list = [];
+
+        Object.entries(openApi.paths || {}).forEach(([routePath, methods]) => {
+            Object.entries(methods).forEach(([method, def]) => {
+                const total = Number(totals[routePath]) || 0;
+                const errCount = Number(errors[routePath]) || 0;
+                const ratio = total > 0 ? errCount / total : 0;
+
+                let health = "green"; // belum ada request / nggak ada error
+                if (total > 0 && ratio >= 0.3) health = "red"; // 30%+ request gagal
+                else if (total > 0 && ratio > 0) health = "yellow"; // pernah error, belum parah
+
+                list.push({
+                    path: routePath,
+                    method: method.toUpperCase(),
+                    summary: def.summary || "",
+                    category: (def.tags && def.tags[0]) || "Other",
+                    total,
+                    errors: errCount,
+                    errorRate: total > 0 ? +(ratio * 100).toFixed(1) : 0,
+                    health,
+                });
+            });
+        });
+
+        res.json({ status: true, result: list });
+    } catch (error) {
+        res.status(500).json({ status: false, error: error.message });
+    }
+});
+
+app.get("/dev/api/errors", async (req, res) => {
+    if (!authMw.isDevAuthorized(req)) return res.status(401).json({ status: false, error: "Unauthorized" });
+    try {
+        const limit = Math.min(parseInt(req.query.limit, 10) || 50, 50);
+        const result = await errorlogUtil.getRecentErrors(limit);
+        res.json({ status: true, result });
+    } catch (error) {
+        res.status(500).json({ status: false, error: error.message });
+    }
+});
+
 app.post("/dev/api/keys", async (req, res) => {
     if (!authMw.isDevAuthorized(req)) return res.status(401).json({ status: false, error: "Unauthorized" });
     if (!redisUtil.isRedisEnabled()) {
@@ -283,6 +393,14 @@ app.use((req, res) => res.status(404).sendFile(path.join(__dirname, "api-page", 
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
+    errorlogUtil.recordError({
+        method: req.method,
+        endpoint: req.originalUrl.split("?")[0],
+        statusCode: 500,
+        message: err.message,
+        ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress,
+        source: "uncaught",
+    });
     logger.sendNotification(`🚨 Server Error: ${err.message}`);
     res.status(500).sendFile(path.join(__dirname, "api-page", "500.html"));
 });

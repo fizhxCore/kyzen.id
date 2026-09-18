@@ -12,9 +12,10 @@ function isDevAuthorized(req) {
 // ========== API KEY SYSTEM ==========
 const API_KEYS_SET = "apikeys:all";
 
-// Endpoint yang wajib pakai API key (yang berat/numpang layanan pihak ketiga sensitif)
-const PROTECTED_PREFIXES = ["/ai/"];
-const PROTECTED_EXACT = ["/download/all"];
+// Endpoint yang wajib pakai API key (kosongin dulu — semua endpoint canvas publik.
+// Tinggal isi lagi kalau nanti ada endpoint baru yang perlu diproteksi)
+const PROTECTED_PREFIXES = [];
+const PROTECTED_EXACT = [];
 
 function isProtectedRoute(reqPath) {
     if (PROTECTED_EXACT.includes(reqPath)) return true;
