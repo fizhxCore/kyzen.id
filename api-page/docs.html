@@ -1,39 +1,335 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Browse through our collection of code snippets, scripts, and tools. Find what you need or discover something new.">
-    <meta name="theme-color" content="#ffffff">
-    <title>Kyzen.id API.</title>
-    <link rel="icon" href="/src/icon.png" type="image/png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/theme.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/languages/json.min.js"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'mono': ['IBM Plex Mono', 'monospace'],
-                        'sans': ['IBM Plex Mono', 'monospace']
-                    }
-                }
-            }
-        }
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Coba langsung endpoint Kyzen API.">
+<title>KYZEN API — Try it out</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0a; --bg-elevated:#0d0d0d; --card:#111111; --card-hover:#151515;
+    --border:#262626; --border-hover:#3a3a3a;
+    --text:#fafafa; --text-secondary:#a1a1aa; --text-tertiary:#6b6b70;
+    --radius-lg:18px; --radius-md:14px; --radius-sm:8px; --ease:cubic-bezier(.4,0,.2,1);
+    --green:#4ade80; --red:#fca5a5;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:'Inter', -apple-system, sans-serif; font-size:15px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none;}
+  code, pre, .mono{font-family:'JetBrains Mono', monospace;}
+  ::selection{background:var(--text);color:var(--bg);}
+  ::-webkit-scrollbar{height:8px;width:8px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important;}html{scroll-behavior:auto;}}
 
-    <style>
-        ::-webkit-scrollbar {
-            display: none !important;
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px;}
+  main{opacity:0;transition:opacity 350ms var(--ease);}
+  main.show{opacity:1;}
+  #loading{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);font-size:13px;transition:opacity 300ms var(--ease);}
+  #loading.hide{opacity:0;pointer-events:none;}
+
+  nav{position:sticky;top:0;z-index:100;background:rgba(10,10,10,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+  .nav-inner{max-width:960px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:16px;}
+  .nav-brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;letter-spacing:-0.02em;flex-shrink:0;}
+  .nav-brand .mark{width:22px;height:22px;border-radius:6px;background:var(--text);color:var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;}
+  .nav-brand a{color:var(--text-tertiary);font-weight:500;font-size:13px;margin-left:2px;}
+  .nav-search{flex:1;max-width:280px;margin-left:auto;position:relative;}
+  .nav-search input{
+    width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);
+    color:var(--text);font-family:inherit;font-size:13px;padding:8px 10px 8px 32px;outline:none;
+    transition:border-color 200ms var(--ease);
+  }
+  .nav-search input:focus{border-color:var(--border-hover);}
+  .nav-search input::placeholder{color:var(--text-tertiary);}
+  .nav-search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text-tertiary);pointer-events:none;}
+
+  .page-head{padding:36px 24px 8px;}
+  .page-head h1{font-size:26px;font-weight:800;letter-spacing:-0.02em;margin:0 0 6px;}
+  .page-head p{color:var(--text-secondary);font-size:13.5px;margin:0;}
+
+  .category-block{padding:20px 24px;border-bottom:1px solid var(--border);}
+  .category-title{font-size:16px;font-weight:700;letter-spacing:-0.01em;margin:0 0 14px;display:flex;align-items:center;gap:8px;}
+  .category-title .count{font-size:11.5px;color:var(--text-tertiary);font-weight:500;}
+
+  .endpoint{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:12px;overflow:hidden;transition:border-color 200ms var(--ease);}
+  .endpoint:hover{border-color:var(--border-hover);}
+  .endpoint-head{display:flex;align-items:center;gap:12px;padding:16px 18px;cursor:pointer;flex-wrap:wrap;}
+  .method{font-family:'JetBrains Mono', monospace;font-size:11px;font-weight:600;letter-spacing:0.02em;padding:4px 9px;border-radius:6px;border:1px solid #1e3a5f;color:#93c5fd;flex-shrink:0;}
+  .ep-path{font-family:'JetBrains Mono', monospace;font-size:13px;color:var(--text);}
+  .ep-desc{color:var(--text-tertiary);font-size:12.5px;flex-basis:100%;}
+  @media(min-width:600px){.ep-desc{flex-basis:auto;margin-left:auto;}}
+  .chevron{margin-left:auto;flex-shrink:0;width:16px;height:16px;color:var(--text-tertiary);transition:transform 200ms var(--ease);}
+  @media(min-width:600px){.chevron{margin-left:0;}}
+  .endpoint.open .chevron{transform:rotate(180deg);}
+  .endpoint-body{display:none;border-top:1px solid var(--border);}
+  .endpoint.open .endpoint-body{display:block;}
+  .endpoint-body-inner{padding:18px;display:grid;grid-template-columns:1fr;gap:18px;}
+  @media(min-width:720px){.endpoint-body-inner{grid-template-columns:1fr 1fr;}}
+
+  .field{margin-bottom:12px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);margin-bottom:6px;}
+  .field label .req{color:var(--red);font-size:10px;}
+  .field label .opt{color:var(--text-tertiary);font-size:10px;}
+  .field input{
+    width:100%;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-sm);
+    color:var(--text);font-family:'JetBrains Mono', monospace;font-size:12.5px;padding:9px 11px;outline:none;
+    transition:border-color 200ms var(--ease);
+  }
+  .field input:focus{border-color:var(--border-hover);}
+  .field input::placeholder{color:var(--text-tertiary);}
+
+  .try-btn{
+    width:100%;font-family:'Inter',sans-serif;font-weight:600;font-size:13.5px;
+    background:var(--text);color:#0a0a0a;border:none;border-radius:var(--radius-sm);
+    padding:11px 0;cursor:pointer;margin-top:6px;
+    transition:background 200ms var(--ease), transform 200ms var(--ease);
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .try-btn:hover{background:#e4e4e7;}
+  .try-btn:active{transform:scale(0.98);}
+  .try-btn:disabled{opacity:0.6;cursor:default;}
+  .spinner{
+    width:13px;height:13px;border-radius:50%;border:2px solid rgba(10,10,10,0.25);
+    border-top-color:#0a0a0a;animation:spin 0.7s linear infinite;display:none;
+  }
+  .try-btn.loading .spinner{display:block;}
+  .try-btn.loading .btn-text{display:none;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .result-panel{
+    background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);
+    min-height:160px;display:flex;align-items:center;justify-content:center;
+    padding:14px;overflow:hidden;
+  }
+  .result-panel .placeholder{color:var(--text-tertiary);font-size:12.5px;text-align:center;}
+  .result-panel img{max-width:100%;max-height:340px;border-radius:8px;display:block;}
+  .result-panel pre{
+    margin:0;font-size:12px;color:var(--red);white-space:pre-wrap;word-break:break-word;
+    width:100%;
+  }
+  .result-meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:11px;color:var(--text-tertiary);}
+  .result-meta .status-ok{color:var(--green);}
+  .result-meta .status-err{color:var(--red);}
+  .dl-link{color:var(--text-secondary);}
+  .dl-link:hover{color:var(--text);}
+
+  #no-results{display:none;text-align:center;padding:50px 20px;color:var(--text-tertiary);font-size:13.5px;}
+
+  footer{padding:28px 24px 40px;color:var(--text-tertiary);font-size:12px;text-align:center;}
+</style>
+</head>
+<body>
+
+<div id="loading">Memuat endpoint...</div>
+
+<main id="main">
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-brand"><span class="mark">K</span>KYZEN API<a href="/">← Home</a></div>
+      <div class="nav-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="searchInput" type="text" placeholder="Search endpoint...">
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <div class="page-head">
+      <h1>Try it out</h1>
+      <p>Isi parameter di bawah terus klik <strong>Send Request</strong> — hasilnya langsung muncul, nggak perlu nulis kode.</p>
+    </div>
+
+    <div id="categoryList"></div>
+    <div id="no-results">Tidak ada endpoint yang cocok dengan pencarian.</div>
+
+    <footer>© 2026 Kyzen.id</footer>
+  </div>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+  }
+
+  let endpointIndex = [];
+
+  function renderEndpoints(openApi){
+    const grouped = {};
+    Object.entries(openApi.paths || {}).forEach(([routePath, methods]) => {
+      Object.entries(methods).forEach(([method, def]) => {
+        const category = (def.tags && def.tags[0]) || "Other";
+        if(!grouped[category]) grouped[category] = [];
+        grouped[category].push({ method, path: routePath, def });
+      });
+    });
+
+    let idx = 0;
+    endpointIndex = [];
+    const container = document.getElementById("categoryList");
+    container.innerHTML = Object.keys(grouped).sort().map(category => {
+      const items = grouped[category].map(({method, path, def}) => {
+        const i = idx++;
+        const params = def.parameters || [];
+        endpointIndex.push({ i, search: (method + " " + path + " " + (def.summary||"") + " " + (def.description||"")).toLowerCase() });
+
+        const fields = params.map(p => `
+          <div class="field">
+            <label>${escapeHtml(p.name)} ${p.required ? '<span class="req">required</span>' : '<span class="opt">optional</span>'}</label>
+            <input type="text" data-param="${escapeHtml(p.name)}" placeholder="${escapeHtml(p.description || p.name)}">
+          </div>
+        `).join("");
+
+        return `
+          <div class="endpoint" data-index="${i}" data-method="${method.toUpperCase()}" data-path="${escapeHtml(path)}">
+            <div class="endpoint-head" data-toggle="${i}">
+              <span class="method">${method.toUpperCase()}</span>
+              <span class="ep-path">${escapeHtml(path)}</span>
+              <span class="ep-desc">${escapeHtml(def.summary || "")}</span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-body-inner">
+                <div>
+                  ${fields || '<p style="font-size:12.5px;color:var(--text-tertiary);margin:0 0 10px;">Endpoint ini nggak butuh parameter.</p>'}
+                  <button class="try-btn" data-try="${i}">
+                    <span class="spinner"></span>
+                    <span class="btn-text">Send Request</span>
+                  </button>
+                </div>
+                <div>
+                  <div class="result-panel" id="result-${i}">
+                    <div class="placeholder">Hasil bakal muncul di sini</div>
+                  </div>
+                  <div class="result-meta" id="meta-${i}"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+      return `<div class="category-block"><h3 class="category-title">${escapeHtml(category)} <span class="count">${grouped[category].length} endpoint</span></h3>${items}</div>`;
+    }).join("");
+  }
+
+  async function runTest(i){
+    const card = document.querySelector(`.endpoint[data-index="${i}"]`);
+    const method = card.dataset.method;
+    const path = card.dataset.path;
+    const btn = card.querySelector(`[data-try="${i}"]`);
+    const resultPanel = document.getElementById(`result-${i}`);
+    const metaPanel = document.getElementById(`meta-${i}`);
+
+    const params = {};
+    card.querySelectorAll("input[data-param]").forEach(inp => {
+      if(inp.value.trim()) params[inp.dataset.param] = inp.value.trim();
+    });
+
+    const qs = new URLSearchParams(params).toString();
+    const url = path + (qs ? "?" + qs : "");
+
+    btn.classList.add("loading");
+    btn.disabled = true;
+    resultPanel.innerHTML = '<div class="placeholder">Mengirim request...</div>';
+    metaPanel.textContent = "";
+
+    const start = performance.now();
+    try {
+      const res = await fetch(url, { method });
+      const ms = Math.round(performance.now() - start);
+      const contentType = res.headers.get("content-type") || "";
+
+      if(res.ok && contentType.startsWith("image/")){
+        const blob = await res.blob();
+        const objUrl = URL.createObjectURL(blob);
+        resultPanel.innerHTML = `<img src="${objUrl}" alt="result">`;
+        metaPanel.innerHTML = `<span class="status-ok">${res.status} OK</span><span>${ms}ms · ${(blob.size/1024).toFixed(1)} KB · <a class="dl-link" href="${objUrl}" download="result.png">Download</a></span>`;
+      } else {
+        let text;
+        try { text = JSON.stringify(await res.json(), null, 2); }
+        catch { text = await res.text(); }
+        resultPanel.innerHTML = `<pre>${escapeHtml(text)}</pre>`;
+        metaPanel.innerHTML = `<span class="${res.ok ? 'status-ok' : 'status-err'}">${res.status} ${res.ok ? 'OK' : 'Error'}</span><span>${ms}ms</span>`;
+      }
+    } catch(err){
+      resultPanel.innerHTML = `<pre>Request gagal: ${escapeHtml(err.message)}</pre>`;
+      metaPanel.innerHTML = `<span class="status-err">Network error</span>`;
+    } finally {
+      btn.classList.remove("loading");
+      btn.disabled = false;
+    }
+  }
+
+  document.addEventListener("click", (e) => {
+    const toggleHead = e.target.closest("[data-toggle]");
+    if(toggleHead && !e.target.closest("input") && !e.target.closest("button")){
+      toggleHead.closest(".endpoint").classList.toggle("open");
+      return;
+    }
+    const tryBtn = e.target.closest("[data-try]");
+    if(tryBtn){
+      e.stopPropagation();
+      runTest(tryBtn.dataset.try);
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if(e.key === "Enter" && e.target.matches("input[data-param]")){
+      e.preventDefault();
+      const idx = e.target.closest(".endpoint").dataset.index;
+      runTest(idx);
+    }
+  });
+
+  const searchInput = document.getElementById("searchInput");
+  searchInput.addEventListener("input", () => {
+    const q = searchInput.value.trim().toLowerCase();
+    let visible = 0;
+    document.querySelectorAll(".endpoint").forEach(el => {
+      const idx = Number(el.dataset.index);
+      const entry = endpointIndex.find(x => x.i === idx);
+      const match = !entry || entry.search.indexOf(q) !== -1;
+      el.style.display = match ? "" : "none";
+      if(match) visible++;
+    });
+    document.querySelectorAll(".category-block").forEach(block => {
+      const anyVisible = [...block.querySelectorAll(".endpoint")].some(el => el.style.display !== "none");
+      block.style.display = anyVisible ? "" : "none";
+    });
+    document.getElementById("no-results").style.display = visible === 0 ? "block" : "none";
+  });
+
+  async function init(){
+    try {
+      const openApi = await fetch("/openapi.json").then(r => r.json());
+      renderEndpoints(openApi);
+    } catch(err){
+      document.getElementById("loading").textContent = "Gagal memuat daftar endpoint.";
+      return;
+    }
+    document.getElementById("loading").classList.add("hide");
+    document.getElementById("main").classList.add("show");
+    setTimeout(() => document.getElementById("loading").style.display = "none", 300);
+  }
+
+  init();
+})();
+</script>
+
+</body>
+</html>
         }
         
         .glass {
