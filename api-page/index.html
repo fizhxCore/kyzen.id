@@ -3,37 +3,117 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Dokumentasi resmi Kyzen API — REST API canvas image generation.">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Kyzen API — Documentation">
-<meta property="og:description" content="Dokumentasi resmi Kyzen API — REST API canvas image generation.">
-<title>KYZEN API — Documentation</title>
+<meta name="description" content="Kyzen API — REST API canvas image generation.">
+<title>KYZEN API</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0a0a0a; --bg-elevated:#0d0d0d; --card:#111111; --card-hover:#151515;
-    --border:#262626; --border-hover:#3a3a3a;
+    --bg:#0a0a0a; --card:#111111; --border:#262626; --border-hover:#3a3a3a;
     --text:#fafafa; --text-secondary:#a1a1aa; --text-tertiary:#6b6b70;
-    --radius-lg:18px; --radius-md:14px; --radius-sm:8px; --ease:cubic-bezier(.4,0,.2,1);
-    --green:#4ade80;
+    --radius-lg:18px; --radius-sm:8px; --ease:cubic-bezier(.4,0,.2,1); --green:#4ade80;
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html,body{height:100%;margin:0;}
   body{
-    margin:0; background:var(--bg); color:var(--text);
-    font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size:15px; line-height:1.6; -webkit-font-smoothing:antialiased;
+    background:var(--bg); color:var(--text);
+    font-family:'Inter', -apple-system, sans-serif;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px; text-align:center;
+    -webkit-font-smoothing:antialiased;
   }
   a{color:inherit;text-decoration:none;}
-  code, pre, .mono{font-family:'JetBrains Mono', monospace;}
-  ::selection{background:var(--text);color:var(--bg);}
-  ::-webkit-scrollbar{height:8px;width:8px;}
-  ::-webkit-scrollbar-track{background:transparent;}
-  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
-  @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important;}html{scroll-behavior:auto;}}
+  code{font-family:'JetBrains Mono', monospace;}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important;}}
 
+  .mark{
+    width:52px;height:52px;border-radius:14px;background:var(--text);color:var(--bg);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;
+    margin-bottom:22px;
+  }
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);
+    border:1px solid var(--border);border-radius:100px;padding:5px 12px;background:var(--card);
+    margin-bottom:22px;
+  }
+  .badge .pulse{width:6px;height:6px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 0 0 rgba(74,222,128,0.5);animation:pulse 2s ease-out infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(74,222,128,.45);}70%{box-shadow:0 0 0 6px rgba(74,222,128,0);}100%{box-shadow:0 0 0 0 rgba(74,222,128,0);}}
+  .badge strong{color:var(--text);font-weight:600;}
+
+  h1{font-size:44px;font-weight:800;letter-spacing:-0.03em;margin:0 0 12px;line-height:1.1;}
+  @media(min-width:640px){h1{font-size:60px;}}
+  p.lead{color:var(--text-secondary);font-size:16px;max-width:480px;margin:0 0 34px;line-height:1.65;}
+
+  .cta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:44px;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-size:14px;font-weight:600;
+    padding:13px 22px;border-radius:var(--radius-sm);border:1px solid transparent;cursor:pointer;
+    transition:transform 200ms var(--ease), background 200ms var(--ease), border-color 200ms var(--ease);
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--text);color:#0a0a0a;}
+  .btn-primary:hover{background:#e4e4e7;}
+  .btn-secondary{background:var(--card);color:var(--text);border-color:var(--border);}
+  .btn-secondary:hover{border-color:var(--border-hover);}
+  .btn svg{width:16px;height:16px;}
+
+  .stats{display:flex;gap:0;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:var(--card);}
+  .stats .stat{padding:16px 24px;border-right:1px solid var(--border);min-width:100px;}
+  .stats .stat:last-child{border-right:none;}
+  .stats .stat .num{font-size:22px;font-weight:800;letter-spacing:-0.02em;}
+  .stats .stat .lbl{font-size:11px;color:var(--text-tertiary);margin-top:2px;}
+
+  footer{position:fixed;bottom:20px;font-size:12px;color:var(--text-tertiary);}
+</style>
+</head>
+<body>
+
+  <div class="mark">K</div>
+  <div class="badge"><span class="pulse"></span>Status: <strong>Online</strong></div>
+
+  <h1>KYZEN API</h1>
+  <p class="lead">REST API canvas image generation — cepat, konsisten, siap produksi. Coba langsung endpoint-nya tanpa perlu nulis kode.</p>
+
+  <div class="cta">
+    <a class="btn btn-primary" href="/docs">
+      Coba API
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+    <a class="btn btn-secondary" href="https://github.com/fizhxCore/kyzen.id" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.5 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.46-1.19-1.11-1.51-1.11-1.51-.91-.64.07-.63.07-.63 1 .07 1.53 1.05 1.53 1.05.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.04 1.03-2.76-.1-.26-.45-1.31.1-2.72 0 0 .84-.27 2.75 1.05a9.28 9.28 0 0 1 5 0c1.91-1.32 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.64 1.03 2.76 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .28.18.6.69.5A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+      GitHub
+    </a>
+  </div>
+
+  <div class="stats" id="stats">
+    <div class="stat"><div class="num" id="s-endpoints">-</div><div class="lbl">Endpoints</div></div>
+    <div class="stat"><div class="num" id="s-version">-</div><div class="lbl">Version</div></div>
+    <div class="stat"><div class="num" id="s-uptime">-</div><div class="lbl">Uptime</div></div>
+  </div>
+
+  <footer>© 2026 Kyzen.id · Runtime: <code>Vercel</code></footer>
+
+  <script>
+    Promise.all([
+      fetch('/openapi.json').then(r => r.json()).catch(() => null),
+      fetch('/health').then(r => r.json()).catch(() => null)
+    ]).then(([openApi, health]) => {
+      if(openApi){
+        const count = Object.values(openApi.paths || {}).reduce((sum, methods) => sum + Object.keys(methods).length, 0);
+        document.getElementById('s-endpoints').textContent = count;
+        document.getElementById('s-version').textContent = openApi.info?.version || '-';
+      }
+      if(health){
+        const up = health.uptime_seconds || 0;
+        document.getElementById('s-uptime').textContent = up < 60 ? up + 's' : up < 3600 ? Math.floor(up/60) + 'm' : Math.floor(up/3600) + 'h';
+      }
+    });
+  </script>
+
+</body>
+</html>
   .wrap{max-width:960px;margin:0 auto;padding:0 24px;}
 
   main{opacity:0;transition:opacity 400ms var(--ease);}
